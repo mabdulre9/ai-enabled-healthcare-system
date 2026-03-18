@@ -7,7 +7,7 @@
 [![Documentation](https://img.shields.io/badge/Docs-available-blue)](https://mabdulre9.github.io/healthcare-system/)
 
 > **100% Private Electronic Medical Records (EMR) with Offline AI Assistant**  
-> 📖 **Documentation:** https://mabdulre9.github.io/healthcare-system/
+> 📖 **Documentation:** https://mabdulre9.github.io/ai-enabled-healthcare-system/
 
 A comprehensive, privacy-first healthcare management system featuring completely offline AI powered by Ollama. No cloud APIs, no data sharing, 100% local and private.
 
