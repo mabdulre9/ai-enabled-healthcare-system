@@ -252,4 +252,11 @@ For issues or questions:
 **100% Private • 100% Free • 100% Offline**
 
 [⭐ Star this repo](https://github.com/mabdulre9/healthcare-system) if you find it useful!
-"# ai-enabled-healthcare-system" 
+
+---
+
+## Feedback & Issues
+
+If you encounter any bugs, have suggestions, or ideas for improvement, don’t hesitate to reach out at **mabdulre9@gmail.com** or open an issue on GitHub.
+
+Contributions and feedback are always welcome!
