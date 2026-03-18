@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} - {{ site.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* Header */
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            border-bottom: 3px solid #34495e;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #34495e;
+            border-bottom: 1px solid #445566;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+        }
+
+        .nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            display: block;
+            border-right: 1px solid #445566;
+            transition: background 0.2s;
+        }
+
+        .nav a:hover {
+            background: #2c3e50;
+        }
+
+        .nav a.active {
+            background: #fff;
+            color: #2c3e50;
+        }
+
+        /* Sidebar */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 2rem 0;
+        }
+
+        .sidebar h3 {
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .sidebar h3:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .sidebar a.active {
+            background: #fff;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: 900px;
+        }
+
+        .main-content h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 0.5rem;
+        }
+
+        .main-content h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+            color: #34495e;
+        }
+
+        .main-content h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #34495e;
+        }
+
+        .main-content h4 {
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #495057;
+        }
+
+        .main-content p {
+            margin-bottom: 1rem;
+        }
+
+        .main-content ul,
+        .main-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .main-content code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Consolas", "Monaco", "Courier New", monospace;
+            font-size: 0.875rem;
+            color: #e83e8c;
+        }
+
+        .main-content pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .main-content pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+        }
+
+        .main-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        .main-content th,
+        .main-content td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        .main-content th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .main-content blockquote {
+            border-left: 4px solid #2c3e50;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .main-content a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .main-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1><a href="{{ site.baseurl }}/">{{ site.title }}</a></h1>
+            <a href="https://github.com/mabdulre9/healthcare-system" target="_blank">View on GitHub</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <div class="nav-content">
+            <a href="{{ site.baseurl }}/">Home</a>
+            <a href="{{ site.baseurl }}/getting-started.html">Getting Started</a>
+            <a href="{{ site.baseurl }}/user-guide.html">User Guide</a>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Documentation</h3>
+            <ul>
+                <li><a href="{{ site.baseurl }}/">Overview</a></li>
+                <li><a href="{{ site.baseurl }}/getting-started.html">Getting Started</a></li>
+                <li><a href="{{ site.baseurl }}/installation.html">Installation</a></li>
+            </ul>
+
+            <h3>User Guide</h3>
+            <ul>
+                <li><a href="{{ site.baseurl }}/user-guide.html">Introduction</a></li>
+                <li><a href="{{ site.baseurl }}/patient-management.html">Patient Management</a></li>
+                <li><a href="{{ site.baseurl }}/ai-assistant.html">AI Assistant</a></li>
+                <li><a href="{{ site.baseurl }}/medical-reports.html">Medical Reports</a></li>
+                <li><a href="{{ site.baseurl }}/fhir-integration.html">FHIR Integration</a></li>
+            </ul>
+
+            <h3>Reference</h3>
+            <ul>
+                <li><a href="{{ site.baseurl }}/configuration.html">Configuration</a></li>
+                <li><a href="{{ site.baseurl }}/troubleshooting.html">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            {{ content }}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Healthcare Management System. Licensed under MIT License.</p>
+            <p>100% Private • 100% Free • 100% Offline</p>
+        </div>
+    </div>
+</body>
+</html>
