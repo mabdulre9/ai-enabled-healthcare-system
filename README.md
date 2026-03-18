@@ -4,7 +4,7 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/) 
 [![Flask](https://img.shields.io/badge/flask-3.0.0-green.svg)](https://flask.palletsprojects.com/) 
 [![Ollama](https://img.shields.io/badge/AI-Ollama%20(Offline)-purple)](https://ollama.com) 
-[![Documentation](https://img.shields.io/badge/Docs-available-blue)](https://mabdulre9.github.io/healthcare-system/)
+[![Documentation](https://img.shields.io/badge/Docs-available-blue)](https://mabdulre9.github.io/ai-enabled-healthcare-system/)
 
 > **100% Private Electronic Medical Records (EMR) with Offline AI Assistant**  
 > 📖 **Documentation:** https://mabdulre9.github.io/ai-enabled-healthcare-system/
