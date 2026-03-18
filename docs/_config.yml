@@ -1,10 +1,10 @@
 title: Healthcare Management System Documentation
 description: Professional Electronic Medical Records with Offline AI
-baseurl: "/healthcare-system"
+baseurl: "/ai-enabled-healthcare-system"
 url: "https://mabdulre9.github.io"
 
 markdown: kramdown
 highlighter: rouge
 
 github:
-  repository_url: https://github.com/mabdulre9/healthcare-system
+  repository_url: https://github.com/mabdulre9/ai-enabled-healthcare-system
