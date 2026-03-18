@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .typing-dot {
+            animation: typing 1.4s infinite;
+            color: var(--success-green);
+            font-size: 20px;
+            line-height: 0;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        #conversationArea::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #conversationArea::-webkit-scrollbar-track {
+            background: var(--gray-50);
+            border-radius: 4px;
+        }
+        
+        #conversationArea::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+        
+        #conversationArea::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Clinical Assistant</h1>
+            <div class="subtitle">Clinical Decision Support</div>
+        </div>
+
+        <div class="patient-info-bar">
+            <span><strong>PATIENT:</strong> <span id="patientName" class="patient-name">LOADING...</span></span>
+            <span><strong>ID:</strong> <span id="patientIdDisplay" class="patient-id">---</span></span>
+            <span><strong>AI MODE:</strong> <span id="aiMode" style="font-weight: 600; color: var(--info-blue);">Loading...</span></span>
+        </div>
+
+        <div class="action-bar">
+            <button onclick="window.location.href='/patient-view'" class="primary">← BACK TO RECORD</button>
+            <button onclick="loadPatientContext()" class="success">RELOAD CONTEXT</button>
+        </div>
+
+        <div class="form-section">
+            <h2>PATIENT CONTEXT LOADED</h2>
+            <div id="contextSummary" class="info-box">
+                <div class="loading">LOADING PATIENT DATA...</div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>CONVERSATION</h2>
+            
+            <div class="info-box warning" style="margin-bottom: 15px;">
+                <strong>⚠ CLINICAL DECISION SUPPORT ONLY</strong><br>
+                This AI assistant provides information to support clinical decision-making.
+                It does not replace professional medical judgment.
+            </div>
+            
+            <div id="conversationArea" style="background: var(--background-paper); border: 1px solid var(--border-color); border-radius: 4px; padding: 20px; min-height: 400px; max-height: 600px; overflow-y: auto; margin-bottom: 20px;">
+                <div style="color: var(--text-secondary); text-align: center; padding: 40px 20px;" id="emptyState">
+                    <p style="font-size: 14px;">💬 No messages yet</p>
+                    <p style="font-size: 12px; margin-top: 10px;">Ask a clinical question to get started</p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                    <label>YOUR CLINICAL QUESTION:</label>
+                    <textarea id="questionInput" rows="3" placeholder="Example: What could be causing this patient's symptoms?" style="margin-bottom: 10px;"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <button onclick="queryAI()" class="primary" id="askButton">
+                        <span id="buttonText">ASK AI ASSISTANT</span>
+                    </button>
+                    <button onclick="clearConversation()" class="secondary" style="margin-left: 10px;">CLEAR CONVERSATION</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentPatient = null;
+        let conversationHistory = [];
+
+        window.onload = async function() {
+            const patientId = sessionStorage.getItem('currentPatientId');
+            if (!patientId) {
+                alert('NO PATIENT SELECTED');
+                window.location.href = '/';
+                return;
+            }
+            
+            await loadPatientContext();
+            loadAIMode();
+        };
+
+        async function loadAIMode() {
+            try {
+                const settings = await apiGet('/api/settings');
+                const aiModeElement = document.getElementById('aiMode');
+                
+                // Always Ollama mode
+                aiModeElement.textContent = 'OLLAMA (OFFLINE)';
+                aiModeElement.style.color = 'var(--success-green)';
+            } catch (error) {
+                document.getElementById('aiMode').textContent = 'OLLAMA (OFFLINE)';
+                document.getElementById('aiMode').style.color = 'var(--success-green)';
+            }
+        }
+
+        async function loadPatientContext() {
+            const patientId = sessionStorage.getItem('currentPatientId');
+            
+            try {
+                currentPatient = await apiGet(`/api/patients/${patientId}`);
+                displayPatientContext(currentPatient);
+                document.getElementById('patientName').textContent = currentPatient.name;
+                document.getElementById('patientIdDisplay').textContent = currentPatient.patientId;
+            } catch (error) {
+                alert('ERROR LOADING PATIENT');
+                window.location.href = '/';
+            }
+        }
+
+        function displayPatientContext(patient) {
+            let summary = `<strong>PATIENT DATA LOADED:</strong><br><br>`;
+            
+            summary += `<strong>Demographics:</strong> ${patient.name}, ${patient.age} years old, ${patient.gender}<br>`;
+            
+            if (patient.activeConditions && patient.activeConditions.length > 0) {
+                summary += `<strong>Active Conditions (${patient.activeConditions.length}):</strong> `;
+                summary += patient.activeConditions.map(c => c.condition).join(', ') + '<br>';
+            }
+            
+            if (patient.activeMedications && patient.activeMedications.length > 0) {
+                summary += `<strong>Current Medications (${patient.activeMedications.length}):</strong> `;
+                summary += patient.activeMedications.map(m => m.medication).join(', ') + '<br>';
+            }
+            
+            if (patient.allergies && patient.allergies.length > 0) {
+                summary += `<strong>Allergies (${patient.allergies.length}):</strong> `;
+                summary += patient.allergies.map(a => a.allergen).join(', ') + '<br>';
+            }
+            
+            if (patient.visits && patient.visits.length > 0) {
+                summary += `<strong>Total Visits:</strong> ${patient.visits.length}<br>`;
+                summary += `<strong>Last Visit:</strong> ${patient.visits[patient.visits.length - 1].date}<br>`;
+            }
+            
+            summary += `<br><em>Complete patient context has been loaded and is ready for AI queries.</em>`;
+            
+            document.getElementById('contextSummary').innerHTML = summary;
+        }
+
+        async function queryAI() {
+            const question = document.getElementById('questionInput').value.trim();
+            
+            if (!question) {
+                showMessage('PLEASE ENTER A QUESTION', 'error');
+                return;
+            }
+            
+            // Disable button
+            const askButton = document.getElementById('askButton');
+            const buttonText = document.getElementById('buttonText');
+            askButton.disabled = true;
+            buttonText.textContent = 'QUERYING AI ASSISTANT...';
+            
+            // Clear input
+            document.getElementById('questionInput').value = '';
+            
+            // Hide empty state
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.remove();
+            
+            // Get conversation area
+            const conversationArea = document.getElementById('conversationArea');
+            
+            // Create user question element
+            const questionDiv = document.createElement('div');
+            questionDiv.style.cssText = 'background-color: var(--gray-50); padding: 12px 15px; margin-bottom: 12px; border-left: 3px solid var(--primary-blue); border-radius: 4px;';
+            
+            const qHeader = document.createElement('div');
+            qHeader.style.cssText = 'color: var(--primary-blue); font-weight: 600; font-size: 11px; margin-bottom: 6px;';
+            qHeader.textContent = 'YOU • ' + new Date().toLocaleTimeString();
+            
+            const qContent = document.createElement('div');
+            qContent.style.cssText = 'color: var(--text-primary); line-height: 1.5;';
+            qContent.textContent = question;
+            
+            questionDiv.appendChild(qHeader);
+            questionDiv.appendChild(qContent);
+            conversationArea.appendChild(questionDiv);
+            
+            // Create AI response element
+            const responseDiv = document.createElement('div');
+            responseDiv.style.cssText = 'background-color: var(--background-paper); padding: 12px 15px; margin-bottom: 20px; border-left: 3px solid var(--success-green); border-radius: 4px;';
+            
+            const rHeader = document.createElement('div');
+            rHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;';
+            
+            const rTitle = document.createElement('div');
+            rTitle.style.cssText = 'color: var(--success-green); font-weight: 600; font-size: 11px;';
+            rTitle.textContent = 'AI ASSISTANT';
+            
+            const rSource = document.createElement('div');
+            rSource.style.cssText = 'font-size: 10px; font-weight: 600; color: var(--text-secondary);';
+            rSource.textContent = 'QUERYING...';
+            
+            rHeader.appendChild(rTitle);
+            rHeader.appendChild(rSource);
+            
+            const rContent = document.createElement('div');
+            rContent.style.cssText = 'color: var(--text-primary); line-height: 1.6; white-space: pre-wrap;';
+            rContent.textContent = '●●●';
+            
+            responseDiv.appendChild(rHeader);
+            responseDiv.appendChild(rContent);
+            conversationArea.appendChild(responseDiv);
+            
+            // Scroll to bottom
+            conversationArea.scrollTop = conversationArea.scrollHeight;
+            
+            try {
+                const response = await apiPost('/api/ai-query', {
+                    patientId: currentPatient.patientId,
+                    question: question
+                });
+                
+                // Update source
+                const sourceText = response.source === 'ollama' ? 'SOURCE: OLLAMA' : 
+                                 response.source === 'llama-cpp' ? 'SOURCE: LLAMA-CPP' : 
+                                 'SOURCE: ONLINE API';
+                const sourceColor = (response.source === 'ollama' || response.source === 'llama-cpp') ? 
+                                  'var(--success-green)' : 'var(--info-blue)';
+                rSource.textContent = sourceText;
+                rSource.style.color = sourceColor;
+                
+                // Stream response
+                const text = response.response;
+                const words = text.split(' ');
+                
+                for (let i = 0; i < words.length; i++) {
+                    const currentText = words.slice(0, i + 1).join(' ');
+                    rContent.textContent = currentText + (i < words.length - 1 ? ' ●' : '');
+                    conversationArea.scrollTop = conversationArea.scrollHeight;
+                    await new Promise(resolve => setTimeout(resolve, 25));
+                }
+                
+                // Final text
+                rContent.textContent = text;
+                
+                // Add to history
+                addToHistory(question, response.response);
+                
+            } catch (error) {
+                rSource.textContent = 'ERROR';
+                rSource.style.color = 'var(--danger-red)';
+                rContent.textContent = '❌ ERROR: ' + error.message;
+                rContent.style.color = 'var(--danger-red)';
+            } finally {
+                askButton.disabled = false;
+                buttonText.textContent = 'ASK AI ASSISTANT';
+                document.getElementById('questionInput').focus();
+            }
+        }
+
+        function clearConversation() {
+            if (confirm('Clear entire conversation?')) {
+                document.getElementById('conversationArea').innerHTML = `
+                    <div style="color: var(--text-secondary); text-align: center; padding: 40px 20px;" id="emptyState">
+                        <p style="font-size: 14px;">💬 No messages yet</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Ask a clinical question to get started</p>
+                    </div>
+                `;
+                conversationHistory = [];
+            }
+        }
+
+        function displayResponse(question, response, source) {
+            const responseDiv = document.getElementById('aiResponse');
+            
+            const sourceLabel = source === 'ollama' ? 'OLLAMA' : 
+                              source === 'llama-cpp' ? 'LLAMA-CPP' : 
+                              source === 'local' ? 'LOCAL LLM' : 'GEMINI API';
+            const sourceColor = (source === 'ollama' || source === 'llama-cpp' || source === 'local') ? 
+                              'var(--success-green)' : 'var(--info-blue)';
+            
+            let html = `
+                <div style="background-color: var(--gray-50); padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    <strong style="color: var(--primary-blue);">YOUR QUESTION:</strong><br>
+                    <p style="color: var(--text-primary); margin-top: 10px;">${escapeHtml(question)}</p>
+                </div>
+                <div style="background-color: var(--background-paper); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: var(--success-green);">AI RESPONSE:</strong>
+                        <span style="color: ${sourceColor}; font-size: 11px; font-weight: 600;">SOURCE: ${sourceLabel}</span>
+                    </div>
+                    <div style="color: var(--text-primary); margin-top: 10px; white-space: pre-wrap; line-height: 1.6;">${formatAIResponse(response)}</div>
+                </div>
+            `;
+            
+            responseDiv.innerHTML = html;
+        }
+
+        function formatAIResponse(text) {
+            // Simple formatting for AI response
+            // Convert markdown-like formatting to HTML
+            let formatted = escapeHtml(text);
+            
+            // Bold
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Lists (simple handling)
+            formatted = formatted.replace(/^- (.+)$/gm, '  • $1');
+            formatted = formatted.replace(/^\d+\. (.+)$/gm, '  $&');
+            
+            return formatted;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function addToHistory(question, response) {
+            conversationHistory.push({
+                question: question,
+                response: response,
+                timestamp: new Date().toLocaleString()
+            });
+            
+            // Only update if element exists
+            const historyDiv = document.getElementById('historyList');
+            if (historyDiv) {
+                updateHistoryDisplay();
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const historyDiv = document.getElementById('historyList');
+            
+            // Exit if element doesn't exist
+            if (!historyDiv) {
+                return;
+            }
+            
+            if (conversationHistory.length === 0) {
+                historyDiv.textContent = 'No questions asked yet...';
+                return;
+            }
+            
+            // Clear existing
+            historyDiv.textContent = '';
+            
+            // Build with createElement (no innerHTML!)
+            conversationHistory.slice().reverse().forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item-block';
+                itemDiv.style.cursor = 'pointer';
+                itemDiv.onclick = () => showHistoryItem(conversationHistory.length - 1 - index);
+                
+                const h4 = document.createElement('h4');
+                h4.textContent = item.timestamp;
+                
+                const p = document.createElement('p');
+                const questionText = item.question.substring(0, 100) + (item.question.length > 100 ? '...' : '');
+                p.innerHTML = '<strong>Q:</strong> ' + escapeHtml(questionText);
+                
+                itemDiv.appendChild(h4);
+                itemDiv.appendChild(p);
+                historyDiv.appendChild(itemDiv);
+            });
+        }
+
+        function showHistoryItem(index) {
+            const item = conversationHistory[index];
+            displayResponse(item.question, item.response);
+            document.getElementById('responseSection').classList.remove('hidden');
+            
+            // Scroll to response
+            document.getElementById('responseSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearResponse() {
+            document.getElementById('aiResponse').innerHTML = '';
+            document.getElementById('responseSection').classList.add('hidden');
+            // Don't clear input - let user type next question
+        }
+
+        function copyResponse() {
+            const responseText = conversationHistory[conversationHistory.length - 1];
+            if (!responseText) return;
+            
+            const text = `Question: ${responseText.question}\n\nResponse: ${responseText.response}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('RESPONSE COPIED TO CLIPBOARD', 'success');
+            }).catch(() => {
+                showMessage('FAILED TO COPY', 'error');
+            });
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+
+        // Allow Enter to submit (with Shift+Enter for new line)
+        document.getElementById('questionInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                queryAI();
+            }
+        });
+    </script>
+</body>
+</html>

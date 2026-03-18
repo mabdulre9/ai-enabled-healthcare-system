@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Patient Registration</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Patient Registration</h1>
+            <div class="subtitle">Complete Patient Intake Form</div>
+        </div>
+
+        <div class="system-info">
+            <span><strong>STATUS:</strong> REGISTRATION MODE</span>
+            <span><strong>PATIENT ID:</strong> <span id="patientIdDisplay" class="patient-id">LOADING...</span></span>
+        </div>
+
+        <form id="patientForm">
+            <!-- ============================================
+                 BASIC DEMOGRAPHICS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>Patient Demographics</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PATIENT ID:</label>
+                        <input type="text" id="patientId" readonly required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>FIRST NAME: *</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>LAST NAME: *</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>DATE OF BIRTH (MM/DD/YYYY): *</label>
+                        <input type="date" id="dob" required onchange="calculateAge()">
+                    </div>
+                    <div class="form-group">
+                        <label>AGE:</label>
+                        <input type="number" id="age" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>GENDER: *</label>
+                        <select id="gender" required>
+                            <option value="">-- SELECT --</option>
+                            <option value="male">MALE</option>
+                            <option value="female">FEMALE</option>
+                            <option value="other">OTHER</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PHONE:</label>
+                        <input type="tel" id="phone" placeholder="555-123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>EMAIL:</label>
+                        <input type="email" id="email" placeholder="patient@email.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ADDRESS:</label>
+                        <textarea id="address" rows="3" placeholder="Street Address&#10;City, State ZIP"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 EMERGENCY CONTACT
+                 ============================================ -->
+            <div class="form-section">
+                <h2>EMERGENCY CONTACT</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CONTACT NAME:</label>
+                        <input type="text" id="emergencyName">
+                    </div>
+                    <div class="form-group">
+                        <label>RELATIONSHIP:</label>
+                        <input type="text" id="emergencyRelation" placeholder="e.g., Spouse, Parent">
+                    </div>
+                    <div class="form-group">
+                        <label>CONTACT PHONE:</label>
+                        <input type="tel" id="emergencyPhone">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 ACTIVE CONDITIONS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>ACTIVE MEDICAL CONDITIONS</h2>
+                <button type="button" onclick="addCondition()" class="success">+ ADD CONDITION</button>
+                <div id="conditionsList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 PAST CONDITIONS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>PAST CONDITIONS (RESOLVED)</h2>
+                <button type="button" onclick="addPastCondition()" class="success">+ ADD PAST CONDITION</button>
+                <div id="pastConditionsList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 CURRENT MEDICATIONS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>CURRENT MEDICATIONS</h2>
+                <button type="button" onclick="addMedication()" class="success">+ ADD MEDICATION</button>
+                <div id="medicationsList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 PAST MEDICATIONS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>DISCONTINUED MEDICATIONS</h2>
+                <button type="button" onclick="addPastMedication()" class="success">+ ADD PAST MEDICATION</button>
+                <div id="pastMedicationsList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 ALLERGIES
+                 ============================================ -->
+            <div class="form-section">
+                <h2>ALLERGIES / INTOLERANCES</h2>
+                <button type="button" onclick="addAllergy()" class="success">+ ADD ALLERGY</button>
+                <div id="allergiesList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 FAMILY HISTORY
+                 ============================================ -->
+            <div class="form-section">
+                <h2>FAMILY MEDICAL HISTORY</h2>
+                <button type="button" onclick="addFamilyHistory()" class="success">+ ADD FAMILY MEMBER</button>
+                <div id="familyHistoryList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 SOCIAL HISTORY
+                 ============================================ -->
+            <div class="form-section">
+                <h2>SOCIAL HISTORY</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SMOKING STATUS:</label>
+                        <select id="smokingStatus">
+                            <option value="never">Never</option>
+                            <option value="former">Former Smoker</option>
+                            <option value="current">Current Smoker</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ALCOHOL USE:</label>
+                        <input type="text" id="alcoholUse" placeholder="e.g., Occasional, None">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>OCCUPATION:</label>
+                        <input type="text" id="occupation">
+                    </div>
+                    <div class="form-group">
+                        <label>EXERCISE HABITS:</label>
+                        <input type="text" id="exerciseHabits" placeholder="e.g., Walks 30min daily">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>DIET NOTES:</label>
+                        <textarea id="diet" rows="2" placeholder="Dietary restrictions, habits, etc."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 ADDITIONAL INFORMATION
+                 ============================================ -->
+            <div class="form-section">
+                <h2>ADDITIONAL MEDICAL NOTES</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SURGICAL HISTORY:</label>
+                        <textarea id="surgicalHistory" rows="3" placeholder="List any past surgeries..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>IMMUNIZATIONS:</label>
+                        <textarea id="immunizations" rows="3" placeholder="Recent vaccinations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>GENERAL NOTES:</label>
+                        <textarea id="generalNotes" rows="4" placeholder="Any other relevant medical information..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 FORM ACTIONS
+                 ============================================ -->
+            <div class="action-bar" style="justify-content: flex-end;">
+                <button type="button" onclick="window.location.href='/'" class="danger">CANCEL</button>
+                <button type="submit" class="primary">SAVE PATIENT RECORD</button>
+            </div>
+        </form>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/patient-form.js"></script>
+    <script>
+        let isEditMode = false;
+        let editingPatientId = null;
+
+        // Generate patient ID on load or load existing patient for editing
+        window.onload = async function() {
+            // Check if in edit mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const editMode = urlParams.get('edit');
+            
+            if (editMode === 'true') {
+                const patientData = sessionStorage.getItem('editPatient');
+                if (patientData) {
+                    isEditMode = true;
+                    loadPatientForEdit(JSON.parse(patientData));
+                    sessionStorage.removeItem('editPatient');
+                    return;
+                }
+            }
+            
+            // Normal registration mode
+            try {
+                const response = await fetch('/api/generate-patient-id');
+                const data = await response.json();
+                document.getElementById('patientId').value = data.patientId;
+                document.getElementById('patientIdDisplay').textContent = data.patientId;
+            } catch (error) {
+                showMessage('Error generating patient ID', 'error');
+            }
+        };
+
+        function loadPatientForEdit(patient) {
+            // Update header
+            document.querySelector('.header h1').textContent = '╔EDIT PATIENT RECORD╗';
+            document.querySelector('.header .subtitle').textContent = 'Update Patient Information';
+            
+            editingPatientId = patient.patientId;
+            
+            // Load basic info
+            document.getElementById('patientId').value = patient.patientId;
+            document.getElementById('patientIdDisplay').textContent = patient.patientId;
+            
+            const nameParts = patient.name.split(' ');
+            document.getElementById('firstName').value = nameParts[0] || '';
+            document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+            document.getElementById('dob').value = patient.dateOfBirth;
+            document.getElementById('age').value = patient.age;
+            document.getElementById('gender').value = patient.gender;
+            document.getElementById('phone').value = patient.phone || '';
+            document.getElementById('email').value = patient.email || '';
+            document.getElementById('address').value = patient.address || '';
+            
+            // Emergency contact
+            if (patient.emergencyContact) {
+                document.getElementById('emergencyName').value = patient.emergencyContact.name || '';
+                document.getElementById('emergencyRelation').value = patient.emergencyContact.relationship || '';
+                document.getElementById('emergencyPhone').value = patient.emergencyContact.phone || '';
+            }
+            
+            // Social history
+            if (patient.socialHistory) {
+                document.getElementById('smokingStatus').value = patient.socialHistory.smokingStatus || 'never';
+                document.getElementById('alcoholUse').value = patient.socialHistory.alcoholUse || '';
+                document.getElementById('occupation').value = patient.socialHistory.occupation || '';
+                document.getElementById('exerciseHabits').value = patient.socialHistory.exerciseHabits || '';
+                document.getElementById('diet').value = patient.socialHistory.diet || '';
+            }
+            
+            // Additional info
+            document.getElementById('surgicalHistory').value = patient.surgicalHistory || '';
+            document.getElementById('immunizations').value = patient.immunizations || '';
+            document.getElementById('generalNotes').value = patient.generalNotes || '';
+            
+            // Load active conditions
+            if (patient.activeConditions && patient.activeConditions.length > 0) {
+                patient.activeConditions.forEach(cond => {
+                    addCondition();
+                    document.getElementById(`condName${conditionCount}`).value = cond.condition;
+                    document.getElementById(`condDate${conditionCount}`).value = cond.diagnosedDate || '';
+                    document.getElementById(`condDoctor${conditionCount}`).value = cond.diagnosedBy || '';
+                    document.getElementById(`condSeverity${conditionCount}`).value = cond.severity || '';
+                    document.getElementById(`condNotes${conditionCount}`).value = cond.notes || '';
+                });
+            }
+            
+            // Load past conditions
+            if (patient.pastConditions && patient.pastConditions.length > 0) {
+                patient.pastConditions.forEach(cond => {
+                    addPastCondition();
+                    document.getElementById(`pastCondName${pastConditionCount}`).value = cond.condition;
+                    document.getElementById(`pastCondDiagDate${pastConditionCount}`).value = cond.diagnosedDate || '';
+                    document.getElementById(`pastCondResolvedDate${pastConditionCount}`).value = cond.resolvedDate || '';
+                    document.getElementById(`pastCondNotes${pastConditionCount}`).value = cond.notes || '';
+                });
+            }
+            
+            // Load medications
+            if (patient.activeMedications && patient.activeMedications.length > 0) {
+                patient.activeMedications.forEach(med => {
+                    addMedication();
+                    document.getElementById(`medName${medicationCount}`).value = med.medication;
+                    document.getElementById(`medDosage${medicationCount}`).value = med.dosage || '';
+                    document.getElementById(`medFreq${medicationCount}`).value = med.frequency || '';
+                    document.getElementById(`medRoute${medicationCount}`).value = med.route || '';
+                    document.getElementById(`medStartDate${medicationCount}`).value = med.startedDate || '';
+                    document.getElementById(`medDoctor${medicationCount}`).value = med.prescribedBy || '';
+                    document.getElementById(`medPurpose${medicationCount}`).value = med.purpose || '';
+                    document.getElementById(`medNotes${medicationCount}`).value = med.notes || '';
+                });
+            }
+            
+            // Load past medications
+            if (patient.pastMedications && patient.pastMedications.length > 0) {
+                patient.pastMedications.forEach(med => {
+                    addPastMedication();
+                    document.getElementById(`pastMedName${pastMedicationCount}`).value = med.medication;
+                    document.getElementById(`pastMedDosage${pastMedicationCount}`).value = med.dosage || '';
+                    document.getElementById(`pastMedFreq${pastMedicationCount}`).value = med.frequency || '';
+                    document.getElementById(`pastMedStartDate${pastMedicationCount}`).value = med.startedDate || '';
+                    document.getElementById(`pastMedStopDate${pastMedicationCount}`).value = med.stoppedDate || '';
+                    document.getElementById(`pastMedReason${pastMedicationCount}`).value = med.reasonStopped || '';
+                });
+            }
+            
+            // Load allergies
+            if (patient.allergies && patient.allergies.length > 0) {
+                patient.allergies.forEach(allergy => {
+                    addAllergy();
+                    document.getElementById(`allergen${allergyCount}`).value = allergy.allergen;
+                    document.getElementById(`allergyReaction${allergyCount}`).value = allergy.reaction || '';
+                    document.getElementById(`allergySeverity${allergyCount}`).value = allergy.severity || '';
+                    document.getElementById(`allergyOnset${allergyCount}`).value = allergy.onsetDate || '';
+                    document.getElementById(`allergyNotes${allergyCount}`).value = allergy.notes || '';
+                });
+            }
+            
+            // Load family history
+            if (patient.familyHistory && patient.familyHistory.length > 0) {
+                patient.familyHistory.forEach(family => {
+                    addFamilyHistory();
+                    document.getElementById(`familyRelative${familyHistoryCount}`).value = family.relative;
+                    document.getElementById(`familyAge${familyHistoryCount}`).value = family.age || '';
+                    document.getElementById(`familyStatus${familyHistoryCount}`).value = family.livingStatus || 'alive';
+                    document.getElementById(`familyConditions${familyHistoryCount}`).value = family.conditions || '';
+                    document.getElementById(`familyNotes${familyHistoryCount}`).value = family.notes || '';
+                });
+            }
+            
+            // Update submit button text
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'UPDATE PATIENT RECORD';
+        }
+
+        function calculateAge() {
+            const dob = document.getElementById('dob').value;
+            if (!dob) return;
+            
+            const today = new Date();
+            const birthDate = new Date(dob);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            document.getElementById('age').value = age;
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

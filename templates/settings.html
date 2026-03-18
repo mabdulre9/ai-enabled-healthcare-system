@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Ollama Configuration</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>System Settings</h1>
+            <div class="subtitle">Ollama AI Configuration & Management</div>
+        </div>
+
+        <div class="system-info">
+            <span><strong>CURRENT MODE:</strong> <span style="color: var(--success-green); font-weight: 600;">OLLAMA (OFFLINE)</span></span>
+            <span><strong>MODEL STATUS:</strong> <span id="modelStatus">---</span></span>
+        </div>
+
+        <div class="action-bar">
+            <button onclick="window.location.href='/'" class="primary">← BACK TO DASHBOARD</button>
+            <button onclick="saveSettings()" class="success" id="saveButton">SAVE SETTINGS</button>
+            <button onclick="testModel()" class="primary" id="testButton">TEST MODEL</button>
+            <button onclick="loadSettings()" class="secondary">RELOAD</button>
+        </div>
+
+        <!-- Ollama Configuration ONLY -->
+        <div class="form-section">
+            <h2>🔒 Ollama Configuration (100% Private & Offline)</h2>
+            
+            <div class="info-box success">
+                <strong>✅ Complete Privacy - Your data never leaves your computer!</strong><br><br>
+                <strong>Setup Steps:</strong><br>
+                1. Download Ollama: <a href="https://ollama.com/download" target="_blank" style="color: white; text-decoration: underline;">https://ollama.com/download</a><br>
+                2. Install and run Ollama<br>
+                3. Pull a model: <code>ollama pull qwen2.5:4b</code><br>
+                4. Enter model name below<br>
+                5. Click TEST MODEL, then SAVE SETTINGS<br>
+                6. Use AI Assistant - completely private!
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ollama Model Name *</label>
+                    <input type="text" id="ollamaModel" placeholder="e.g., qwen2.5:4b, llama3.2:3b, qwen3:0.6b" required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+                        <strong>Popular Models:</strong><br>
+                        • <code>qwen2.5:4b</code> - Balanced (2.5GB) - Recommended<br>
+                        • <code>qwen3:0.6b</code> - Smallest (523MB) - Fast<br>
+                        • <code>llama3.2:3b</code> - High quality (2GB)<br><br>
+                        Download: <code>ollama pull qwen2.5:4b</code><br>
+                        Check installed: <code>ollama list</code>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Ollama Host</label>
+                    <input type="text" id="ollamaHost" value="http://localhost:11434" readonly style="background: var(--gray-100);">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+                        Default Ollama API endpoint (do not change)
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="flex: 2;">
+                    <label>System Prompt</label>
+                    <textarea id="systemPrompt" rows="3" placeholder="Instructions for AI behavior">You are a clinical AI assistant. Provide evidence-based medical insights to support physician decision-making. Consider patient history, medications, and safety.</textarea>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+                        Instructions that guide the AI's behavior and responses
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Temperature (Creativity)</label>
+                    <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+                        0.0 = Very precise<br>
+                        0.7 = Balanced (recommended)<br>
+                        2.0 = Very creative
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Max Tokens (Response Length)</label>
+                    <select id="maxTokens">
+                        <option value="512">512 - Short responses</option>
+                        <option value="1024">1024 - Medium responses</option>
+                        <option value="2048" selected>2048 - Long responses (Recommended)</option>
+                        <option value="4096">4096 - Very long responses</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Make sure Ollama is running!</strong><br>
+                Open terminal and run: <code>ollama list</code><br>
+                If you see "command not found", install Ollama first.
+            </div>
+
+            <div class="info-box" style="background: var(--info-blue-light); border-left-color: var(--info-blue);">
+                <strong>💾 Memory Management</strong><br>
+                Ollama keeps models loaded in RAM (2-4GB) for fast responses.<br>
+                When you're done using AI, free up memory:
+                <div style="margin-top: 10px;">
+                    <button onclick="unloadOllamaModel()" class="secondary" style="background: var(--info-blue); color: white;">
+                        🔄 UNLOAD MODEL FROM MEMORY
+                    </button>
+                </div>
+                <small style="display: block; margin-top: 8px; color: var(--text-secondary);">
+                    Frees 2-4GB RAM. Model automatically reloads on next query.
+                </small>
+            </div>
+        </div>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentSettings = {};
+
+        window.onload = function() {
+            loadSettings();
+        };
+
+        async function loadSettings() {
+            try {
+                const settings = await apiGet('/api/settings');
+                currentSettings = settings;
+
+                // Populate form
+                document.getElementById('ollamaModel').value = settings.ollama_model || 'qwen2.5:4b';
+                document.getElementById('ollamaHost').value = settings.ollama_host || 'http://localhost:11434';
+                document.getElementById('systemPrompt').value = settings.system_prompt || 'You are a clinical AI assistant.';
+                document.getElementById('temperature').value = settings.temperature || 0.7;
+                document.getElementById('maxTokens').value = settings.max_tokens || 2048;
+
+                // Update status
+                if (settings.ollama_model) {
+                    document.getElementById('modelStatus').textContent = 'CONFIGURED ✓';
+                    document.getElementById('modelStatus').style.color = 'var(--success-green)';
+                } else {
+                    document.getElementById('modelStatus').textContent = 'NOT CONFIGURED';
+                    document.getElementById('modelStatus').style.color = 'var(--danger-red)';
+                }
+
+            } catch (error) {
+                showMessage('Error loading settings: ' + error.message, 'error');
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const modelName = document.getElementById('ollamaModel').value.trim();
+
+                if (!modelName) {
+                    showMessage('❌ Please enter Ollama model name', 'error');
+                    return;
+                }
+
+                const settings = {
+                    ollama_model: modelName,
+                    ollama_host: document.getElementById('ollamaHost').value,
+                    system_prompt: document.getElementById('systemPrompt').value,
+                    temperature: parseFloat(document.getElementById('temperature').value),
+                    max_tokens: parseInt(document.getElementById('maxTokens').value)
+                };
+
+                const result = await apiPost('/api/settings', settings);
+                
+                showMessage('✓ Settings saved successfully!', 'success');
+                
+                // Reload to update status
+                setTimeout(loadSettings, 1000);
+
+            } catch (error) {
+                showMessage('❌ Error saving settings: ' + error.message, 'error');
+            }
+        }
+
+        async function testModel() {
+            try {
+                const modelName = document.getElementById('ollamaModel').value.trim();
+                
+                if (!modelName) {
+                    showMessage('❌ Please enter Ollama model name first', 'error');
+                    return;
+                }
+
+                showMessage('⏳ Testing Ollama connection and model...\n\nThis may take 10-30 seconds on first run.\nPlease wait...', 'info');
+
+                const testResult = await apiPost('/api/settings/test-model', {
+                    test_ollama: true,
+                    ollama_model: modelName
+                });
+                
+                showMessage('✅ ' + (testResult.message || 'Ollama test successful!'), 'success');
+                
+            } catch (error) {
+                showMessage('❌ Test Failed:\n\n' + error.message + '\n\nMake sure:\n1. Ollama is installed\n2. Ollama is running\n3. Model is downloaded: ollama pull ' + document.getElementById('ollamaModel').value, 'error');
+            }
+        }
+
+        async function unloadOllamaModel() {
+            if (!confirm('Unload Ollama model from memory?\n\nThis will free up 2-4GB RAM.\nModel will automatically reload on next query.')) {
+                return;
+            }
+
+            showMessage('⏳ Unloading model from memory...', 'info');
+
+            try {
+                const response = await apiPost('/api/ollama/unload', {});
+                showMessage('✅ ' + (response.message || 'Model unloaded successfully!\n\nRAM has been freed.'), 'success');
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'error' ? 'alert-error' : 'alert-info';
+            
+            messageArea.innerHTML = `<div class="alert ${alertClass}" style="white-space: pre-wrap;">${message}</div>`;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageArea.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

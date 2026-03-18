@@ -1,0 +1,811 @@
+/* ============================================
+   PROFESSIONAL HOSPITAL EMR STYLES
+   Clinical-Grade Design System
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Professional Medical Color Palette */
+    --primary-blue: #0B5394;        /* Deep clinical blue */
+    --primary-blue-dark: #073763;   /* Darker blue for depth */
+    --secondary-teal: #078B8C;      /* Medical teal accent */
+    --success-green: #0F9D58;       /* Clinical green */
+    --warning-amber: #F4B400;       /* Medical alert amber */
+    --danger-red: #DB4437;          /* Critical alert red */
+    --info-blue: #4285F4;           /* Information blue */
+    
+    /* Neutral Grays (Hospital Standard) */
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #9E9E9E;
+    --gray-600: #757575;
+    --gray-700: #616161;
+    --gray-800: #424242;
+    --gray-900: #212121;
+    
+    /* Semantic Colors */
+    --text-primary: #212121;
+    --text-secondary: #616161;
+    --text-disabled: #9E9E9E;
+    --border-color: #E0E0E0;
+    --divider-color: #EEEEEE;
+    --background-main: #FFFFFF;
+    --background-alt: #FAFAFA;
+    --background-paper: #FFFFFF;
+    
+    /* Shadows (Subtle, professional) */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.12);
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-base: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 24px;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--gray-100);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: var(--background-main);
+    box-shadow: var(--shadow-lg);
+    min-height: 100vh;
+}
+
+/* ============================================
+   HEADER STYLES (Hospital Standard)
+   ============================================ */
+
+.header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: #fff;
+    padding: 20px 40px;
+    border-bottom: 3px solid var(--secondary-teal);
+}
+
+.header h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+}
+
+.header .subtitle {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+.system-info {
+    background-color: var(--gray-50);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 40px;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+}
+
+.system-info span {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.patient-info-bar {
+    background-color: var(--gray-50);
+    border-bottom: 2px solid var(--primary-blue);
+    padding: 12px 40px;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+}
+
+.patient-info-bar strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.5px;
+}
+
+.patient-info-bar .patient-name {
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    margin-left: 8px;
+}
+
+.patient-info-bar .patient-id {
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    margin-left: 8px;
+}
+
+/* ============================================
+   BUTTON STYLES (Clinical Standard)
+   ============================================ */
+
+button, .btn {
+    background-color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+    color: #fff;
+    padding: 9px 18px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    margin: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    box-shadow: none;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+button:hover, .btn:hover {
+    background-color: var(--primary-blue-dark);
+    border-color: var(--primary-blue-dark);
+    box-shadow: var(--shadow-md);
+}
+
+button:active, .btn:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-sm);
+}
+
+button.primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+button.primary:hover {
+    background-color: var(--primary-blue-dark);
+}
+
+button.danger {
+    background-color: var(--danger-red);
+    border-color: var(--danger-red);
+}
+
+button.danger:hover {
+    background-color: #C33D2E;
+}
+
+button.success {
+    background-color: var(--success-green);
+    border-color: var(--success-green);
+}
+
+button.success:hover {
+    background-color: #0D8A4D;
+}
+
+button.warning {
+    background-color: var(--warning-amber);
+    border-color: var(--warning-amber);
+    color: var(--text-primary);
+}
+
+button.warning:hover {
+    background-color: #E3A800;
+}
+
+button.secondary {
+    background-color: var(--gray-100);
+    border-color: var(--gray-300);
+    color: var(--text-primary);
+}
+
+button.secondary:hover {
+    background-color: var(--gray-200);
+}
+
+button:disabled {
+    background-color: var(--gray-300);
+    border-color: var(--gray-300);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================
+   FORM STYLES (EMR Standard)
+   ============================================ */
+
+.form-section {
+    background-color: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 16px 40px;
+}
+
+.form-section h2 {
+    color: var(--primary-blue);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--divider-color);
+}
+
+.form-section h3 {
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    margin: 12px 0 8px 0;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: var(--background-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(11, 83, 148, 0.1);
+}
+
+.form-group input[readonly] {
+    background-color: var(--gray-100);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* ============================================
+   CARD STYLES (Clinical Cards)
+   ============================================ */
+
+.card {
+    background-color: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 20px;
+    margin: 16px 40px;
+    box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+    background-color: var(--gray-50);
+    color: var(--text-primary);
+    padding: 12px 16px;
+    margin: -20px -20px 16px -20px;
+    border-bottom: 2px solid var(--primary-blue);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+}
+
+.card-header h3 {
+    font-size: var(--font-size-lg);
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.patient-card {
+    background-color: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-blue);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-card:hover {
+    border-left-color: var(--secondary-teal);
+    box-shadow: var(--shadow-md);
+    transform: translateX(2px);
+}
+
+.patient-card h3 {
+    color: var(--primary-blue);
+    font-size: var(--font-size-lg);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.patient-card p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+/* ============================================
+   TABLE STYLES (Clinical Data Tables)
+   ============================================ */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--background-paper);
+    border: 1px solid var(--border-color);
+    font-size: var(--font-size-sm);
+}
+
+table th {
+    background-color: var(--gray-50);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--divider-color);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr:hover {
+    background-color: var(--gray-50);
+}
+
+/* ============================================
+   ACTION BAR (Clinical Toolbar)
+   ============================================ */
+
+.action-bar {
+    background-color: var(--background-paper);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 40px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-box {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    gap: 8px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(11, 83, 148, 0.1);
+}
+
+/* ============================================
+   DYNAMIC ITEM BLOCKS (Clinical Data)
+   ============================================ */
+
+.item-block {
+    background-color: var(--gray-50);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-blue);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.item-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.item-block-header h4 {
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    margin: 0;
+    font-weight: 600;
+}
+
+.item-number {
+    background-color: var(--primary-blue);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: var(--font-size-xs);
+}
+
+.item-block p {
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    margin: 6px 0;
+    line-height: 1.5;
+}
+
+.item-block strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ============================================
+   TABS (Clinical Navigation)
+   ============================================ */
+
+.tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding: 0 40px;
+    background-color: var(--background-paper);
+}
+
+.tab {
+    background-color: transparent;
+    color: var(--text-secondary);
+    padding: 12px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab:hover {
+    color: var(--primary-blue);
+    background-color: var(--gray-50);
+    transform: none;
+    box-shadow: none;
+}
+
+.tab.active {
+    color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+    background-color: transparent;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ============================================
+   INFO BOX (Clinical Alerts)
+   ============================================ */
+
+.info-box {
+    background-color: #E8F4FD;
+    border-left: 4px solid var(--info-blue);
+    padding: 12px 16px;
+    margin: 16px 40px;
+    border-radius: 4px;
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+}
+
+.info-box.warning {
+    background-color: #FEF7E0;
+    border-left-color: var(--warning-amber);
+}
+
+.info-box.error {
+    background-color: #FCE8E6;
+    border-left-color: var(--danger-red);
+}
+
+.info-box.success {
+    background-color: #E6F4EA;
+    border-left-color: var(--success-green);
+}
+
+/* ============================================
+   ALERT/MESSAGE STYLES (Clinical Notifications)
+   ============================================ */
+
+.alert {
+    padding: 12px 16px;
+    margin: 16px 40px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: #E6F4EA;
+    border-left-color: var(--success-green);
+    color: #137333;
+}
+
+.alert-error {
+    background-color: #FCE8E6;
+    border-left-color: var(--danger-red);
+    color: #A50E0E;
+}
+
+.alert-info {
+    background-color: #E8F4FD;
+    border-left-color: var(--info-blue);
+    color: #185ABC;
+}
+
+/* ============================================
+   LOADING SPINNER (Clinical Standard)
+   ============================================ */
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-blue);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--gray-300);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   BADGES & LABELS (Clinical Status)
+   ============================================ */
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-active {
+    background-color: #E6F4EA;
+    color: var(--success-green);
+}
+
+.badge-inactive {
+    background-color: var(--gray-200);
+    color: var(--text-secondary);
+}
+
+.badge-critical {
+    background-color: #FCE8E6;
+    color: var(--danger-red);
+}
+
+.badge-warning {
+    background-color: #FEF7E0;
+    color: #E37400;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .header {
+        padding: 16px 20px;
+    }
+
+    .header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .system-info,
+    .action-bar,
+    .form-section,
+    .card,
+    .info-box,
+    .alert {
+        margin-left: 16px;
+        margin-right: 16px;
+        padding: 12px;
+    }
+
+    .tabs {
+        padding: 0 16px;
+        overflow-x: auto;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .action-bar {
+        flex-direction: column;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+        margin: 4px 0;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: var(--text-secondary);
+}
+
+.text-primary {
+    color: var(--primary-blue);
+}
+
+.text-danger {
+    color: var(--danger-red);
+}
+
+.text-success {
+    color: var(--success-green);
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mb-16 {
+    margin-bottom: 16px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ============================================
+   ACCESSIBILITY & FOCUS STATES
+   ============================================ */
+
+*:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   PRINT STYLES (For Medical Records)
+   ============================================ */
+
+@media print {
+    body {
+        background-color: white;
+    }
+    
+    .action-bar,
+    button,
+    .tabs {
+        display: none;
+    }
+    
+    .container {
+        box-shadow: none;
+    }
+}

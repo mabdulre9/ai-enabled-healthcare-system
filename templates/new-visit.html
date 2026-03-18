@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Visit</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Patient Visit</h1>
+            <div class="subtitle">Record Clinical Encounter</div>
+        </div>
+
+        <div class="system-info">
+            <span><strong>PATIENT:</strong> <span id="patientName" class="patient-name">LOADING...</span></span>
+            <span><strong>ID:</strong> <span id="patientIdDisplay" class="patient-id">---</span></span>
+        </div>
+
+        <form id="visitForm">
+            <!-- ============================================
+                 VISIT INFORMATION
+                 ============================================ -->
+            <div class="form-section">
+                <h2>VISIT DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>VISIT DATE: *</label>
+                        <input type="date" id="visitDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>VISIT TYPE: *</label>
+                        <select id="visitType" required>
+                            <option value="">-- SELECT --</option>
+                            <option value="routine">ROUTINE CHECKUP</option>
+                            <option value="follow-up">FOLLOW-UP</option>
+                            <option value="emergency">EMERGENCY</option>
+                            <option value="consultation">CONSULTATION</option>
+                            <option value="procedure">PROCEDURE</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CHIEF COMPLAINT / REASON FOR VISIT: *</label>
+                        <textarea id="chiefComplaint" rows="3" required placeholder="Patient's main concern or reason for visit"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 VITAL SIGNS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>VITAL SIGNS</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>BLOOD PRESSURE (mmHg):</label>
+                        <input type="text" id="bloodPressure" placeholder="e.g., 120/80">
+                    </div>
+                    <div class="form-group">
+                        <label>HEART RATE (bpm):</label>
+                        <input type="number" id="heartRate" placeholder="e.g., 72">
+                    </div>
+                    <div class="form-group">
+                        <label>TEMPERATURE (°F):</label>
+                        <input type="number" step="0.1" id="temperature" placeholder="e.g., 98.6">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>WEIGHT (lbs):</label>
+                        <input type="number" step="0.1" id="weight" placeholder="e.g., 165">
+                    </div>
+                    <div class="form-group">
+                        <label>HEIGHT (inches):</label>
+                        <input type="number" step="0.1" id="height" placeholder="e.g., 66">
+                    </div>
+                    <div class="form-group">
+                        <label>BMI:</label>
+                        <input type="text" id="bmi" readonly placeholder="Auto-calculated">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>RESPIRATORY RATE (breaths/min):</label>
+                        <input type="number" id="respiratoryRate" placeholder="e.g., 16">
+                    </div>
+                    <div class="form-group">
+                        <label>OXYGEN SATURATION (%):</label>
+                        <input type="number" id="oxygenSat" placeholder="e.g., 98">
+                    </div>
+                    <div class="form-group">
+                        <label>BLOOD GLUCOSE (mg/dL):</label>
+                        <input type="number" id="glucose" placeholder="e.g., 100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 SYMPTOMS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>SYMPTOMS & HISTORY OF PRESENT ILLNESS</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SYMPTOMS:</label>
+                        <textarea id="symptoms" rows="4" placeholder="List all symptoms patient is experiencing..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 PHYSICAL EXAMINATION
+                 ============================================ -->
+            <div class="form-section">
+                <h2>PHYSICAL EXAMINATION</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>EXAMINATION FINDINGS:</label>
+                        <textarea id="examination" rows="4" placeholder="Document physical exam findings..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 ASSESSMENT
+                 ============================================ -->
+            <div class="form-section">
+                <h2>ASSESSMENT / DIAGNOSIS</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>DIAGNOSIS / ASSESSMENT: *</label>
+                        <textarea id="assessment" rows="4" required placeholder="Clinical assessment and working diagnosis..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 TREATMENT PLAN
+                 ============================================ -->
+            <div class="form-section">
+                <h2>TREATMENT PLAN</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PLAN / TREATMENT:</label>
+                        <textarea id="plan" rows="4" placeholder="Treatment plan, medications prescribed, follow-up instructions..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 PRESCRIPTIONS
+                 ============================================ -->
+            <div class="form-section">
+                <h2>PRESCRIPTIONS</h2>
+                <button type="button" onclick="addPrescription()" class="success">+ ADD PRESCRIPTION</button>
+                <div id="prescriptionsList" class="mt-20"></div>
+            </div>
+
+            <!-- ============================================
+                 LABS ORDERED
+                 ============================================ -->
+            <div class="form-section">
+                <h2>LABORATORY TESTS ORDERED</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>LABS ORDERED:</label>
+                        <textarea id="labsOrdered" rows="3" placeholder="List lab tests ordered (e.g., CBC, HbA1c, Lipid Panel)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 ADDITIONAL NOTES
+                 ============================================ -->
+            <div class="form-section">
+                <h2>ADDITIONAL NOTES</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CLINICAL NOTES:</label>
+                        <textarea id="notes" rows="4" placeholder="Any additional observations, patient education provided, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>FOLLOW-UP DATE:</label>
+                        <input type="date" id="followUpDate">
+                    </div>
+                    <div class="form-group">
+                        <label>SEEN BY (Provider):</label>
+                        <input type="text" id="seenBy" placeholder="Dr. Name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 FORM ACTIONS
+                 ============================================ -->
+            <div class="action-bar" style="justify-content: flex-end;">
+                <button type="button" onclick="goBack()" class="danger">CANCEL</button>
+                <button type="submit" class="primary">SAVE VISIT RECORD</button>
+            </div>
+        </form>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentPatientId = null;
+        let prescriptionCount = 0;
+
+        window.onload = async function() {
+            currentPatientId = sessionStorage.getItem('currentPatientId');
+            if (!currentPatientId) {
+                alert('NO PATIENT SELECTED');
+                window.location.href = '/';
+                return;
+            }
+            
+            // Load patient info
+            try {
+                const patient = await apiGet(`/api/patients/${currentPatientId}`);
+                document.getElementById('patientName').textContent = patient.name;
+                document.getElementById('patientIdDisplay').textContent = patient.patientId;
+                
+                // Pre-fill height if available from previous visit
+                if (patient.visits && patient.visits.length > 0) {
+                    const lastVisit = patient.visits[patient.visits.length - 1];
+                    if (lastVisit.vitals && lastVisit.vitals.height) {
+                        document.getElementById('height').value = lastVisit.vitals.height;
+                    }
+                }
+            } catch (error) {
+                alert('ERROR LOADING PATIENT');
+                window.location.href = '/';
+            }
+            
+            // Set current date
+            document.getElementById('visitDate').value = getCurrentDate();
+        };
+
+        function addPrescription() {
+            prescriptionCount++;
+            const html = `
+                <div class="item-block" id="prescription${prescriptionCount}">
+                    <div class="item-block-header">
+                        <h4><span class="item-number">#${prescriptionCount}</span> PRESCRIPTION</h4>
+                        <button type="button" onclick="removeElement('prescription${prescriptionCount}')" class="danger">REMOVE</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>MEDICATION:</label>
+                            <input type="text" id="rxMed${prescriptionCount}" placeholder="Medication name">
+                        </div>
+                        <div class="form-group">
+                            <label>DOSAGE:</label>
+                            <input type="text" id="rxDose${prescriptionCount}" placeholder="e.g., 500mg">
+                        </div>
+                        <div class="form-group">
+                            <label>FREQUENCY:</label>
+                            <input type="text" id="rxFreq${prescriptionCount}" placeholder="e.g., twice daily">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>QUANTITY:</label>
+                            <input type="text" id="rxQty${prescriptionCount}" placeholder="e.g., 30 tablets">
+                        </div>
+                        <div class="form-group">
+                            <label>REFILLS:</label>
+                            <input type="number" id="rxRefills${prescriptionCount}" placeholder="0">
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('prescriptionsList').insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeElement(id) {
+            document.getElementById(id).remove();
+        }
+
+        // Auto-calculate BMI
+        document.getElementById('weight').addEventListener('input', calculateBMI);
+        document.getElementById('height').addEventListener('input', calculateBMI);
+
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            
+            if (weight && height && height > 0) {
+                const bmi = ((weight / (height * height)) * 703).toFixed(1);
+                document.getElementById('bmi').value = bmi;
+            }
+        }
+
+        document.getElementById('visitForm').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            // Collect visit data
+            const visitData = {
+                date: document.getElementById('visitDate').value,
+                type: document.getElementById('visitType').value,
+                chiefComplaint: document.getElementById('chiefComplaint').value,
+                vitals: {
+                    bloodPressure: document.getElementById('bloodPressure').value,
+                    heartRate: document.getElementById('heartRate').value,
+                    temperature: document.getElementById('temperature').value,
+                    weight: document.getElementById('weight').value,
+                    height: document.getElementById('height').value,
+                    bmi: document.getElementById('bmi').value,
+                    respiratoryRate: document.getElementById('respiratoryRate').value,
+                    oxygenSat: document.getElementById('oxygenSat').value,
+                    glucose: document.getElementById('glucose').value
+                },
+                symptoms: document.getElementById('symptoms').value,
+                examination: document.getElementById('examination').value,
+                assessment: document.getElementById('assessment').value,
+                plan: document.getElementById('plan').value,
+                labsOrdered: document.getElementById('labsOrdered').value,
+                notes: document.getElementById('notes').value,
+                followUp: document.getElementById('followUpDate').value,
+                seenBy: document.getElementById('seenBy').value,
+                prescriptions: []
+            };
+            
+            // Collect prescriptions
+            for (let i = 1; i <= prescriptionCount; i++) {
+                const medEl = document.getElementById(`rxMed${i}`);
+                if (medEl && medEl.value) {
+                    visitData.prescriptions.push({
+                        medication: medEl.value,
+                        dosage: document.getElementById(`rxDose${i}`).value,
+                        frequency: document.getElementById(`rxFreq${i}`).value,
+                        quantity: document.getElementById(`rxQty${i}`).value,
+                        refills: document.getElementById(`rxRefills${i}`).value
+                    });
+                }
+            }
+            
+            // Save visit
+            try {
+                const result = await apiPost(`/api/patients/${currentPatientId}/visits`, visitData);
+                
+                showMessage('VISIT RECORDED SUCCESSFULLY!', 'success');
+                
+                // Ask user what they want to do
+                setTimeout(async () => {
+                    const choice = confirm(
+                        'Visit Saved Successfully!\n\n' +
+                        'Visit ID: ' + result.visitId + '\n\n' +
+                        'Would you like to download the Visit Report as a Word document?\n\n' +
+                        'Click OK to download report\n' +
+                        'Click Cancel to return to patient record'
+                    );
+                    
+                    if (choice) {
+                        // Download Word report
+                        const reportUrl = `/api/patients/${currentPatientId}/visits/${result.visitId}/report`;
+                        window.location.href = reportUrl;
+                        
+                        // Wait a moment then redirect
+                        setTimeout(() => {
+                            window.location.href = '/patient-view';
+                        }, 1500);
+                    } else {
+                        // Just redirect to patient view
+                        window.location.href = '/patient-view';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                showMessage('ERROR SAVING VISIT: ' + error.message, 'error');
+            }
+        };
+
+        function downloadVisit(visitData) {
+            const dataStr = JSON.stringify(visitData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${visitData.visitId}_${visitData.date}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function goBack() {
+            window.location.href = '/patient-view';
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

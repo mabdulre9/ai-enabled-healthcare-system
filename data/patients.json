@@ -1,0 +1,310 @@
+[
+  {
+    "patientId": "PATIENT-001",
+    "name": "Jane Doe",
+    "dateOfBirth": "1990-08-22",
+    "age": 34,
+    "gender": "female",
+    "phone": "555-0123",
+    "email": "jane.doe@email.com",
+    "address": "123 Main Street\nSpringfield, IL 62701",
+    "emergencyContact": {
+      "name": "John Doe",
+      "relationship": "Husband",
+      "phone": "555-0124"
+    },
+    "activeConditions": [
+      {
+        "condition": "Type 2 Diabetes Mellitus",
+        "diagnosedDate": "2020-03-15",
+        "diagnosedBy": "Dr. Smith",
+        "severity": "moderate",
+        "notes": "Well controlled with medication",
+        "status": "active"
+      },
+      {
+        "condition": "Essential Hypertension",
+        "diagnosedDate": "2021-06-20",
+        "diagnosedBy": "Dr. Smith",
+        "severity": "mild",
+        "notes": "Responding well to Lisinopril",
+        "status": "active"
+      }
+    ],
+    "pastConditions": [
+      {
+        "condition": "Gestational Diabetes",
+        "diagnosedDate": "2018-05-10",
+        "resolvedDate": "2018-11-20",
+        "notes": "During pregnancy, resolved after delivery"
+      }
+    ],
+    "activeMedications": [
+      {
+        "medication": "Metformin",
+        "dosage": "500mg",
+        "frequency": "twice daily",
+        "route": "oral",
+        "startedDate": "2020-03-15",
+        "prescribedBy": "Dr. Smith",
+        "purpose": "Type 2 Diabetes management",
+        "notes": "Take with meals",
+        "status": "active"
+      },
+      {
+        "medication": "Lisinopril",
+        "dosage": "10mg",
+        "frequency": "once daily",
+        "route": "oral",
+        "startedDate": "2021-06-20",
+        "prescribedBy": "Dr. Smith",
+        "purpose": "Blood pressure control",
+        "notes": "Take in morning",
+        "status": "active"
+      }
+    ],
+    "pastMedications": [
+      {
+        "medication": "Hydrochlorothiazide",
+        "dosage": "25mg",
+        "frequency": "once daily",
+        "route": "oral",
+        "startedDate": "2021-06-20",
+        "stoppedDate": "2022-01-10",
+        "reasonStopped": "Switched to Lisinopril - better efficacy"
+      }
+    ],
+    "allergies": [
+      {
+        "allergen": "Penicillin",
+        "reaction": "Skin rash, hives",
+        "severity": "moderate",
+        "onsetDate": "2010-07-15",
+        "notes": "Developed rash within hours of taking amoxicillin"
+      },
+      {
+        "allergen": "Shellfish",
+        "reaction": "Nausea, vomiting",
+        "severity": "mild",
+        "onsetDate": "2015-08-20",
+        "notes": "Affects only when eating shrimp"
+      }
+    ],
+    "familyHistory": [
+      {
+        "relative": "Mother",
+        "age": "62",
+        "livingStatus": "alive",
+        "conditions": "Type 2 Diabetes (age 45), Breast Cancer (age 58, in remission)",
+        "notes": "Mother's diabetes managed with insulin"
+      },
+      {
+        "relative": "Father",
+        "age": "65",
+        "livingStatus": "alive",
+        "conditions": "Hypertension (age 50), Coronary Artery Disease (age 60)",
+        "notes": "Father had stent placed in 2020"
+      },
+      {
+        "relative": "Paternal Grandfather",
+        "age": "",
+        "livingStatus": "deceased",
+        "conditions": "Diabetes (age 55), Died from Myocardial Infarction at age 72",
+        "notes": ""
+      }
+    ],
+    "socialHistory": {
+      "smokingStatus": "never",
+      "alcoholUse": "Occasional (1-2 drinks per week)",
+      "occupation": "Software Engineer",
+      "exerciseHabits": "Walks 30 min, 3 times per week",
+      "diet": "Trying to follow diabetic diet"
+    },
+    "surgicalHistory": "Appendectomy (2015), Cesarean Section (2018)",
+    "immunizations": "Influenza (2023), Tdap (2020), COVID-19 series complete",
+    "generalNotes": "Patient is compliant with medications and follows up regularly",
+    "visits": [
+      {
+        "visitId": "PATIENT-001-VISIT-001",
+        "date": "2024-01-15",
+        "type": "routine",
+        "chiefComplaint": "Follow-up for diabetes and hypertension",
+        "vitals": {
+          "bloodPressure": "135/85",
+          "heartRate": "72",
+          "temperature": "98.6",
+          "weight": "165",
+          "height": "66",
+          "bmi": "26.6",
+          "glucose": "150"
+        },
+        "symptoms": "Mild headache, occasional",
+        "examination": "General: Alert and oriented. CV: Regular rate and rhythm. Lungs: Clear bilaterally.",
+        "assessment": "Type 2 Diabetes - stable, Hypertension - improving",
+        "plan": "Continue current medications, recheck in 2 months",
+        "labsOrdered": "HbA1c, Lipid Panel, Comprehensive Metabolic Panel",
+        "notes": "Blood pressure improving. Patient compliant with medications.",
+        "followUp": "2024-03-15",
+        "seenBy": "Dr. Smith",
+        "prescriptions": []
+      },
+      {
+        "visitId": "PATIENT-001-VISIT-002",
+        "date": "2024-02-05",
+        "type": "follow-up",
+        "chiefComplaint": "Increased thirst and frequent urination",
+        "vitals": {
+          "bloodPressure": "140/90",
+          "heartRate": "78",
+          "temperature": "98.4",
+          "weight": "167",
+          "height": "66",
+          "bmi": "26.9",
+          "glucose": "160"
+        },
+        "symptoms": "Increased thirst, frequent urination, mild fatigue",
+        "examination": "General: Appears well. HEENT: Normal. CV: RRR. Lungs: Clear.",
+        "assessment": "Type 2 Diabetes - glucose control worsening, Hypertension - stable",
+        "plan": "Increase Metformin to 1000mg twice daily, monitor glucose at home, dietary counseling",
+        "labsOrdered": "HbA1c stat",
+        "notes": "Glucose levels elevated. Discussed diet and exercise. Patient agrees to home glucose monitoring.",
+        "followUp": "2024-03-01",
+        "seenBy": "Dr. Smith",
+        "prescriptions": [
+          {
+            "medication": "Metformin",
+            "dosage": "1000mg",
+            "frequency": "twice daily",
+            "quantity": "60 tablets",
+            "refills": "3"
+          }
+        ]
+      }
+    ],
+    "labResults": [
+      {
+        "testName": "HbA1c",
+        "date": "2024-01-15",
+        "result": "7.2%",
+        "normalRange": "<5.7% (normal), 5.7-6.4% (prediabetes), ≥6.5% (diabetes)",
+        "status": "elevated"
+      }
+    ]
+  },
+  {
+    "patientId": "PATIENT-002",
+    "name": "Robert Johnson",
+    "dateOfBirth": "1965-03-10",
+    "age": 59,
+    "gender": "male",
+    "phone": "555-0456",
+    "email": "robert.j@email.com",
+    "address": "456 Oak Avenue\nSpringfield, IL 62702",
+    "emergencyContact": {
+      "name": "Mary Johnson",
+      "relationship": "Wife",
+      "phone": "555-0457"
+    },
+    "activeConditions": [
+      {
+        "condition": "Coronary Artery Disease",
+        "diagnosedDate": "2022-09-15",
+        "diagnosedBy": "Dr. Wilson",
+        "severity": "moderate",
+        "notes": "Stent placed in LAD",
+        "status": "active"
+      },
+      {
+        "condition": "Hyperlipidemia",
+        "diagnosedDate": "2020-01-10",
+        "diagnosedBy": "Dr. Smith",
+        "severity": "moderate",
+        "notes": "On statin therapy",
+        "status": "active"
+      }
+    ],
+    "pastConditions": [],
+    "activeMedications": [
+      {
+        "medication": "Atorvastatin",
+        "dosage": "40mg",
+        "frequency": "once daily",
+        "route": "oral",
+        "startedDate": "2020-01-10",
+        "prescribedBy": "Dr. Smith",
+        "purpose": "Cholesterol management",
+        "notes": "Take at bedtime",
+        "status": "active"
+      },
+      {
+        "medication": "Aspirin",
+        "dosage": "81mg",
+        "frequency": "once daily",
+        "route": "oral",
+        "startedDate": "2022-09-15",
+        "prescribedBy": "Dr. Wilson",
+        "purpose": "Antiplatelet therapy",
+        "notes": "Take with food",
+        "status": "active"
+      },
+      {
+        "medication": "Metoprolol",
+        "dosage": "50mg",
+        "frequency": "twice daily",
+        "route": "oral",
+        "startedDate": "2022-09-15",
+        "prescribedBy": "Dr. Wilson",
+        "purpose": "Heart rate control",
+        "notes": "",
+        "status": "active"
+      }
+    ],
+    "pastMedications": [],
+    "allergies": [],
+    "familyHistory": [
+      {
+        "relative": "Father",
+        "age": "",
+        "livingStatus": "deceased",
+        "conditions": "Died from Heart Attack at age 58",
+        "notes": "Strong family history of cardiac disease"
+      }
+    ],
+    "socialHistory": {
+      "smokingStatus": "former",
+      "alcoholUse": "None",
+      "occupation": "Retired Teacher",
+      "exerciseHabits": "Cardiac rehab 3x/week",
+      "diet": "Heart-healthy diet"
+    },
+    "surgicalHistory": "Coronary stent placement (2022)",
+    "immunizations": "Influenza (2023), Pneumococcal (2022)",
+    "generalNotes": "Patient doing well post-stent. Good medication compliance.",
+    "visits": [
+      {
+        "visitId": "PATIENT-002-VISIT-001",
+        "date": "2024-01-20",
+        "type": "follow-up",
+        "chiefComplaint": "Routine cardiac follow-up",
+        "vitals": {
+          "bloodPressure": "125/78",
+          "heartRate": "64",
+          "temperature": "98.2",
+          "weight": "180",
+          "height": "70",
+          "bmi": "25.8"
+        },
+        "symptoms": "None, feeling well",
+        "examination": "CV: Regular rate, no murmurs. Lungs: Clear.",
+        "assessment": "Coronary artery disease - stable post-stent",
+        "plan": "Continue current medications. Stress test in 3 months.",
+        "labsOrdered": "Lipid panel",
+        "notes": "Patient tolerating medications well. Encouraged continued exercise.",
+        "followUp": "2024-04-20",
+        "seenBy": "Dr. Wilson",
+        "prescriptions": []
+      }
+    ],
+    "labResults": []
+  }
+]

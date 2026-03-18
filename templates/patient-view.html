@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Record</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Patient Medical Record</h1>
+            <div class="subtitle">Comprehensive Patient Information</div>
+        </div>
+
+        <div class="patient-info-bar">
+            <span><strong>PATIENT:</strong> <span id="patientName" class="patient-name">LOADING...</span></span>
+            <span><strong>ID:</strong> <span id="patientIdDisplay" class="patient-id">---</span></span>
+        </div>
+
+        <div class="action-bar">
+            <button onclick="window.location.href='/'" class="secondary">← BACK TO DASHBOARD</button>
+            <button onclick="newVisit()" class="success">+ NEW VISIT</button>
+            <button onclick="openAIAssistant()" class="primary">AI ASSISTANT</button>
+            <button onclick="downloadMedicalRecord()" class="success">📄 DOWNLOAD MEDICAL RECORD</button>
+            <button onclick="editPatient()" class="warning">EDIT PATIENT</button>
+            <button onclick="exportPatient()" class="primary">DOWNLOAD JSON</button>
+            <button onclick="confirmDelete()" class="danger">DELETE PATIENT</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('summary')">SUMMARY</div>
+            <div class="tab" onclick="switchTab('conditions')">CONDITIONS</div>
+            <div class="tab" onclick="switchTab('medications')">MEDICATIONS</div>
+            <div class="tab" onclick="switchTab('allergies')">ALLERGIES</div>
+            <div class="tab" onclick="switchTab('visits')">VISIT HISTORY</div>
+            <div class="tab" onclick="switchTab('family')">FAMILY HISTORY</div>
+        </div>
+
+        <div id="summary" class="tab-content active">
+            <div class="form-section">
+                <h2>DEMOGRAPHICS</h2>
+                <div id="demographics"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>ACTIVE CONDITIONS</h2>
+                <div id="summaryConditions"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>CURRENT MEDICATIONS</h2>
+                <div id="summaryMedications"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>ALLERGIES</h2>
+                <div id="summaryAllergies"></div>
+            </div>
+        </div>
+
+        <div id="conditions" class="tab-content">
+            <div class="form-section">
+                <h2>ACTIVE CONDITIONS</h2>
+                <div id="activeConditionsList"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>PAST CONDITIONS (RESOLVED)</h2>
+                <div id="pastConditionsList"></div>
+            </div>
+        </div>
+
+        <div id="medications" class="tab-content">
+            <div class="form-section">
+                <h2>CURRENT MEDICATIONS</h2>
+                <div id="activeMedicationsList"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>DISCONTINUED MEDICATIONS</h2>
+                <div id="pastMedicationsList"></div>
+            </div>
+        </div>
+
+        <div id="allergies" class="tab-content">
+            <div class="form-section">
+                <h2>ALLERGIES & INTOLERANCES</h2>
+                <div id="allergiesList"></div>
+            </div>
+        </div>
+
+        <div id="visits" class="tab-content">
+            <div class="form-section">
+                <h2>VISIT HISTORY</h2>
+                <div id="visitsList"></div>
+            </div>
+        </div>
+
+        <div id="family" class="tab-content">
+            <div class="form-section">
+                <h2>FAMILY MEDICAL HISTORY</h2>
+                <div id="familyHistoryList"></div>
+            </div>
+            
+            <div class="form-section">
+                <h2>SOCIAL HISTORY</h2>
+                <div id="socialHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentPatient = null;
+
+        window.onload = async function() {
+            const patientId = sessionStorage.getItem('currentPatientId');
+            if (!patientId) {
+                alert('NO PATIENT SELECTED');
+                window.location.href = '/';
+                return;
+            }
+            
+            await loadPatient(patientId);
+        };
+
+        async function loadPatient(patientId) {
+            try {
+                currentPatient = await apiGet(`/api/patients/${patientId}`);
+                displayPatient(currentPatient);
+            } catch (error) {
+                alert('ERROR LOADING PATIENT');
+                window.location.href = '/';
+            }
+        }
+
+        function displayPatient(patient) {
+            document.getElementById('patientName').textContent = patient.name;
+            document.getElementById('patientIdDisplay').textContent = patient.patientId;
+            
+            // Demographics
+            document.getElementById('demographics').innerHTML = `
+                <p><strong>NAME:</strong> ${patient.name}</p>
+                <p><strong>DATE OF BIRTH:</strong> ${patient.dateOfBirth} (Age: ${patient.age})</p>
+                <p><strong>GENDER:</strong> ${patient.gender.toUpperCase()}</p>
+                <p><strong>PHONE:</strong> ${patient.phone || 'N/A'}</p>
+                <p><strong>EMAIL:</strong> ${patient.email || 'N/A'}</p>
+                <p><strong>ADDRESS:</strong> ${patient.address || 'N/A'}</p>
+                ${patient.emergencyContact && patient.emergencyContact.name ? `
+                    <p><strong>EMERGENCY CONTACT:</strong> ${patient.emergencyContact.name} (${patient.emergencyContact.relationship}) - ${patient.emergencyContact.phone}</p>
+                ` : ''}
+            `;
+            
+            // Summary - Active Conditions
+            if (patient.activeConditions && patient.activeConditions.length > 0) {
+                let html = '<ul>';
+                patient.activeConditions.forEach(c => {
+                    html += `<li>${c.condition} (diagnosed ${c.diagnosedDate || 'unknown'})</li>`;
+                });
+                html += '</ul>';
+                document.getElementById('summaryConditions').innerHTML = html;
+            } else {
+                document.getElementById('summaryConditions').innerHTML = '<p>NO ACTIVE CONDITIONS</p>';
+            }
+            
+            // Summary - Medications
+            if (patient.activeMedications && patient.activeMedications.length > 0) {
+                let html = '<ul>';
+                patient.activeMedications.forEach(m => {
+                    html += `<li>${m.medication} ${m.dosage} ${m.frequency}</li>`;
+                });
+                html += '</ul>';
+                document.getElementById('summaryMedications').innerHTML = html;
+            } else {
+                document.getElementById('summaryMedications').innerHTML = '<p>NO CURRENT MEDICATIONS</p>';
+            }
+            
+            // Summary - Allergies
+            if (patient.allergies && patient.allergies.length > 0) {
+                let html = '<ul style="color: #ff8080;">';
+                patient.allergies.forEach(a => {
+                    html += `<li><strong>${a.allergen}</strong> - ${a.reaction} (${a.severity} severity)</li>`;
+                });
+                html += '</ul>';
+                document.getElementById('summaryAllergies').innerHTML = html;
+            } else {
+                document.getElementById('summaryAllergies').innerHTML = '<p>NO KNOWN ALLERGIES</p>';
+            }
+            
+            // Detailed Conditions
+            displayConditions(patient);
+            displayMedications(patient);
+            displayAllergies(patient);
+            displayVisits(patient);
+            displayFamilyHistory(patient);
+        }
+
+        function displayConditions(patient) {
+            // Active conditions
+            if (patient.activeConditions && patient.activeConditions.length > 0) {
+                let html = '';
+                patient.activeConditions.forEach((c, i) => {
+                    html += `
+                        <div class="item-block">
+                            <h4>${i + 1}. ${c.condition}</h4>
+                            <p><strong>DIAGNOSED:</strong> ${c.diagnosedDate || 'Unknown'}</p>
+                            <p><strong>DIAGNOSED BY:</strong> ${c.diagnosedBy || 'N/A'}</p>
+                            <p><strong>SEVERITY:</strong> ${c.severity ? c.severity.toUpperCase() : 'N/A'}</p>
+                            ${c.notes ? `<p><strong>NOTES:</strong> ${c.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('activeConditionsList').innerHTML = html;
+            } else {
+                document.getElementById('activeConditionsList').innerHTML = '<p>NO ACTIVE CONDITIONS</p>';
+            }
+            
+            // Past conditions
+            if (patient.pastConditions && patient.pastConditions.length > 0) {
+                let html = '';
+                patient.pastConditions.forEach((c, i) => {
+                    html += `
+                        <div class="item-block">
+                            <h4>${i + 1}. ${c.condition}</h4>
+                            <p><strong>DIAGNOSED:</strong> ${c.diagnosedDate || 'Unknown'}</p>
+                            <p><strong>RESOLVED:</strong> ${c.resolvedDate || 'Unknown'}</p>
+                            ${c.notes ? `<p><strong>NOTES:</strong> ${c.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('pastConditionsList').innerHTML = html;
+            } else {
+                document.getElementById('pastConditionsList').innerHTML = '<p>NO PAST CONDITIONS</p>';
+            }
+        }
+
+        function displayMedications(patient) {
+            // Active medications
+            if (patient.activeMedications && patient.activeMedications.length > 0) {
+                let html = '';
+                patient.activeMedications.forEach((m, i) => {
+                    html += `
+                        <div class="item-block">
+                            <h4>${i + 1}. ${m.medication} ${m.dosage}</h4>
+                            <p><strong>FREQUENCY:</strong> ${m.frequency}</p>
+                            <p><strong>ROUTE:</strong> ${m.route ? m.route.toUpperCase() : 'N/A'}</p>
+                            <p><strong>STARTED:</strong> ${m.startedDate || 'Unknown'}</p>
+                            <p><strong>PRESCRIBED BY:</strong> ${m.prescribedBy || 'N/A'}</p>
+                            ${m.purpose ? `<p><strong>PURPOSE:</strong> ${m.purpose}</p>` : ''}
+                            ${m.notes ? `<p><strong>NOTES:</strong> ${m.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('activeMedicationsList').innerHTML = html;
+            } else {
+                document.getElementById('activeMedicationsList').innerHTML = '<p>NO CURRENT MEDICATIONS</p>';
+            }
+            
+            // Past medications
+            if (patient.pastMedications && patient.pastMedications.length > 0) {
+                let html = '';
+                patient.pastMedications.forEach((m, i) => {
+                    html += `
+                        <div class="item-block">
+                            <h4>${i + 1}. ${m.medication} ${m.dosage}</h4>
+                            <p><strong>STARTED:</strong> ${m.startedDate || 'Unknown'}</p>
+                            <p><strong>STOPPED:</strong> ${m.stoppedDate || 'Unknown'}</p>
+                            ${m.reasonStopped ? `<p><strong>REASON:</strong> ${m.reasonStopped}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('pastMedicationsList').innerHTML = html;
+            } else {
+                document.getElementById('pastMedicationsList').innerHTML = '<p>NO DISCONTINUED MEDICATIONS</p>';
+            }
+        }
+
+        function displayAllergies(patient) {
+            if (patient.allergies && patient.allergies.length > 0) {
+                let html = '';
+                patient.allergies.forEach((a, i) => {
+                    html += `
+                        <div class="item-block" style="border-color: #ff8080;">
+                            <h4 style="color: #ff8080;">${i + 1}. ${a.allergen}</h4>
+                            <p><strong>REACTION:</strong> ${a.reaction}</p>
+                            <p><strong>SEVERITY:</strong> ${a.severity ? a.severity.toUpperCase() : 'N/A'}</p>
+                            <p><strong>ONSET:</strong> ${a.onsetDate || 'Unknown'}</p>
+                            ${a.notes ? `<p><strong>NOTES:</strong> ${a.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('allergiesList').innerHTML = html;
+            } else {
+                document.getElementById('allergiesList').innerHTML = '<p>NO KNOWN ALLERGIES</p>';
+            }
+        }
+
+        function displayVisits(patient) {
+            if (patient.visits && patient.visits.length > 0) {
+                let html = '';
+                const sortedVisits = patient.visits.slice().reverse(); // Most recent first
+                sortedVisits.forEach((v, i) => {
+                    html += `
+                        <div class="item-block">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>VISIT ${patient.visits.length - i}: ${v.date}</h4>
+                                <button onclick="downloadVisitReport('${v.visitId}')" class="success" style="padding: 6px 12px; font-size: 11px; margin: 0;">📄 DOWNLOAD REPORT</button>
+                            </div>
+                            <p><strong>TYPE:</strong> ${v.type ? v.type.toUpperCase() : 'N/A'}</p>
+                            <p><strong>CHIEF COMPLAINT:</strong> ${v.chiefComplaint || 'N/A'}</p>
+                            ${v.vitals ? `
+                                <p><strong>VITALS:</strong></p>
+                                <ul>
+                                    ${v.vitals.bloodPressure ? `<li>BP: ${v.vitals.bloodPressure}</li>` : ''}
+                                    ${v.vitals.heartRate ? `<li>Heart Rate: ${v.vitals.heartRate}</li>` : ''}
+                                    ${v.vitals.temperature ? `<li>Temperature: ${v.vitals.temperature}</li>` : ''}
+                                    ${v.vitals.weight ? `<li>Weight: ${v.vitals.weight}</li>` : ''}
+                                </ul>
+                            ` : ''}
+                            ${v.symptoms ? `<p><strong>SYMPTOMS:</strong> ${v.symptoms}</p>` : ''}
+                            ${v.assessment ? `<p><strong>ASSESSMENT:</strong> ${v.assessment}</p>` : ''}
+                            ${v.plan ? `<p><strong>PLAN:</strong> ${v.plan}</p>` : ''}
+                            ${v.notes ? `<p><strong>NOTES:</strong> ${v.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('visitsList').innerHTML = html;
+            } else {
+                document.getElementById('visitsList').innerHTML = '<p>NO VISITS RECORDED</p>';
+            }
+        }
+
+        function downloadVisitReport(visitId) {
+            if (!currentPatient || !visitId) return;
+            
+            // Download Word document for this specific visit
+            const reportUrl = `/api/patients/${currentPatient.patientId}/visits/${visitId}/report`;
+            window.location.href = reportUrl;
+        }
+
+        function displayFamilyHistory(patient) {
+            if (patient.familyHistory && patient.familyHistory.length > 0) {
+                let html = '';
+                patient.familyHistory.forEach((f, i) => {
+                    html += `
+                        <div class="item-block">
+                            <h4>${i + 1}. ${f.relative}</h4>
+                            <p><strong>AGE:</strong> ${f.age || 'N/A'} | <strong>STATUS:</strong> ${f.livingStatus ? f.livingStatus.toUpperCase() : 'N/A'}</p>
+                            ${f.conditions ? `<p><strong>CONDITIONS:</strong> ${f.conditions}</p>` : ''}
+                            ${f.notes ? `<p><strong>NOTES:</strong> ${f.notes}</p>` : ''}
+                        </div>
+                    `;
+                });
+                document.getElementById('familyHistoryList').innerHTML = html;
+            } else {
+                document.getElementById('familyHistoryList').innerHTML = '<p>NO FAMILY HISTORY RECORDED</p>';
+            }
+            
+            // Social history
+            if (patient.socialHistory) {
+                const sh = patient.socialHistory;
+                document.getElementById('socialHistory').innerHTML = `
+                    <p><strong>SMOKING:</strong> ${sh.smokingStatus || 'N/A'}</p>
+                    <p><strong>ALCOHOL:</strong> ${sh.alcoholUse || 'N/A'}</p>
+                    <p><strong>OCCUPATION:</strong> ${sh.occupation || 'N/A'}</p>
+                    <p><strong>EXERCISE:</strong> ${sh.exerciseHabits || 'N/A'}</p>
+                    <p><strong>DIET:</strong> ${sh.diet || 'N/A'}</p>
+                `;
+            } else {
+                document.getElementById('socialHistory').innerHTML = '<p>NO SOCIAL HISTORY RECORDED</p>';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function newVisit() {
+            window.location.href = '/new-visit';
+        }
+
+        function openAIAssistant() {
+            window.location.href = '/ai-assistant';
+        }
+
+        async function downloadMedicalRecord() {
+            if (!currentPatient) return;
+            
+            try {
+                // Download Word document
+                const reportUrl = `/api/patients/${currentPatient.patientId}/full-report`;
+                window.location.href = reportUrl;
+                
+                alert('DOWNLOADING COMPLETE MEDICAL RECORD\n\nYour comprehensive patient report is being generated as a Word document.');
+            } catch (error) {
+                alert('ERROR GENERATING MEDICAL RECORD\n\n' + error.message);
+            }
+        }
+
+        function editPatient() {
+            // Store patient data for editing
+            sessionStorage.setItem('editPatient', JSON.stringify(currentPatient));
+            window.location.href = '/new-patient?edit=true';
+        }
+
+        async function exportPatient() {
+            if (!currentPatient) return;
+            
+            try {
+                const response = await apiGet(`/api/patients/${currentPatient.patientId}/export`);
+                
+                // Create downloadable JSON file
+                const dataStr = JSON.stringify(response, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${currentPatient.patientId}_${currentPatient.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert('PATIENT RECORD DOWNLOADED SUCCESSFULLY');
+            } catch (error) {
+                alert('ERROR DOWNLOADING PATIENT RECORD');
+            }
+        }
+
+        async function confirmDelete() {
+            if (!currentPatient) return;
+            
+            const confirmed = confirm(
+                `⚠ WARNING ⚠\n\n` +
+                `DELETE PATIENT: ${currentPatient.name} (${currentPatient.patientId})\n\n` +
+                `This will permanently delete:\n` +
+                `- All patient information\n` +
+                `- ${currentPatient.visits ? currentPatient.visits.length : 0} visit records\n` +
+                `- Complete medical history\n\n` +
+                `THIS CANNOT BE UNDONE!\n\n` +
+                `Are you sure you want to delete this patient?`
+            );
+            
+            if (!confirmed) return;
+            
+            // Double confirmation
+            const doubleConfirm = confirm(
+                `FINAL CONFIRMATION\n\n` +
+                `Type the patient ID to confirm deletion.\n` +
+                `Expected: ${currentPatient.patientId}\n\n` +
+                `Click OK to proceed with deletion.`
+            );
+            
+            if (!doubleConfirm) return;
+            
+            try {
+                const response = await fetch(`/api/patients/${currentPatient.patientId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('PATIENT DELETED SUCCESSFULLY');
+                    window.location.href = '/';
+                } else {
+                    alert('ERROR DELETING PATIENT');
+                }
+            } catch (error) {
+                alert('ERROR DELETING PATIENT');
+            }
+        }
+    </script>
+</body>
+</html>

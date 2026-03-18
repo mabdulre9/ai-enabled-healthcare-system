@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Management System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Healthcare Management System</h1>
+            <div class="subtitle">Electronic Medical Records (EMR) with AI Assistant</div>
+        </div>
+
+        <div class="system-info">
+            <span><strong>SYSTEM STATUS:</strong> <span id="systemStatus" style="color: var(--success-green); font-weight: 600;"><span style="display: inline-block; width: 8px; height: 8px; background-color: var(--success-green); border-radius: 50%; margin-right: 6px;"></span>ONLINE</span></span>
+            <span><strong>DATE:</strong> <span id="currentDate"></span></span>
+            <span><strong>TIME:</strong> <span id="currentTime"></span></span>
+        </div>
+
+        <div class="action-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Enter Patient ID or Name...">
+                <button onclick="searchPatient()" class="primary">SEARCH</button>
+            </div>
+            <button onclick="window.location.href='/new-patient'" class="success">+ REGISTER NEW PATIENT</button>
+            <button onclick="document.getElementById('importFile').click()" class="primary">IMPORT FHIR</button>
+            <button onclick="window.open('https://mabdulre9.github.io/healthcare-system/', '_blank')" class="primary">📖 DOCS</button>
+            <button onclick="window.location.href='/settings'" class="warning">⚙️ SETTINGS</button>
+        </div>
+
+        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPatient(event)">
+
+        <div id="searchResults" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h3>SEARCH RESULTS</h3>
+                </div>
+                <div id="resultsContainer"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>RECENT PATIENTS</h3>
+            </div>
+            <div id="recentPatients">
+                <div class="loading">LOADING PATIENT DATABASE</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>SYSTEM INFORMATION:</strong><br>
+            • Use SEARCH to find existing patients<br>
+            • Click REGISTER NEW PATIENT to add new patient records<br>
+            • Click on any patient to VIEW RECORD or ADD VISIT<br>
+            • Total Patients: <span id="totalPatients">0</span>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Load recent patients on page load
+        window.onload = function() {
+            loadRecentPatients();
+        };
+
+        // Import patient from JSON file
+        async function importPatient(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const patientData = JSON.parse(e.target.result);
+                    
+                    // Check if it's a FHIR Bundle
+                    const isFhirBundle = patientData.resourceType === 'Bundle';
+                    const isFhirPatient = patientData.resourceType === 'Patient';
+                    
+                    if (isFhirBundle || isFhirPatient) {
+                        alert('FHIR R4 FORMAT DETECTED\n\nConverting to system format...');
+                    }
+                    
+                    // Try to import
+                    try {
+                        const response = await apiPost('/api/patients/import', patientData);
+                        
+                        const importedName = response.patientId || 'Unknown';
+                        alert(`SUCCESS!\n\nPatient imported successfully.\nPatient ID: ${response.patientId}\n\n${isFhirBundle ? 'Note: FHIR Bundle was converted to simplified format.' : ''}`);
+                        loadRecentPatients();
+                    } catch (error) {
+                        // Check if patient exists
+                        if (error.message.includes('409')) {
+                            const errorData = JSON.parse(error.message.split('\n').pop());
+                            const replace = confirm(
+                                `PATIENT ALREADY EXISTS\n\n` +
+                                `Patient ID: ${errorData.patientId}\n\n` +
+                                `Do you want to REPLACE the existing patient with this data?\n\n` +
+                                `WARNING: This will overwrite all existing data for this patient!`
+                            );
+                            
+                            if (replace) {
+                                await apiPost('/api/patients/import/replace', patientData);
+                                alert('PATIENT REPLACED SUCCESSFULLY');
+                                loadRecentPatients();
+                            }
+                        } else {
+                            alert('ERROR IMPORTING PATIENT\n\n' + error.message);
+                        }
+                    }
+                } catch (error) {
+                    alert('INVALID JSON FILE\n\nPlease select a valid patient JSON file or FHIR Bundle.\n\nError: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>
