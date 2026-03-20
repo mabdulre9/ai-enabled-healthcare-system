@@ -57,7 +57,7 @@ Healthcare Management System is a professional Electronic Medical Records (EMR) 
 
 ```bash
 # Clone the repository
-git clone https://github.com/mabdulre9/healthcare-system.git
+git clone https://github.com/mabdulre9/ai-enabled-healthcare-system.git
 cd healthcare-system
 
 # Create virtual environment
@@ -148,13 +148,13 @@ Reliable operation in areas with limited internet connectivity. Complete EMR fun
 - **User Documentation:** [User Guide](user-guide.html)
 - **API Documentation:** [API Reference](api-reference.html)
 - **Common Issues:** [Troubleshooting](troubleshooting.html)
-- **GitHub Issues:** [Report a bug](https://github.com/mabdulre9/healthcare-system/issues)
+- **GitHub Issues:** [Report a bug](https://github.com/mabdulre9/ai-enabled-healthcare-system/issues)
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/mabdulre9/healthcare-system/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/mabdulre9/ai-enabled-healthcare-system/blob/main/LICENSE) file for details.
 
 ---
 
