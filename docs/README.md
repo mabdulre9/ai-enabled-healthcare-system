@@ -1,4 +1,4 @@
-# Professional Documentation for GitHub Pages
+# Documentation for GitHub Pages
 
 Clean, professional documentation inspired by OpenCV style.
 
@@ -19,7 +19,7 @@ Clean, professional documentation inspired by OpenCV style.
 
 Documentation will be live at:
 ```
-https://mabdulre9.github.io/healthcare-system/
+https://mabdulre9.github.io/ai-enabled-healthcare-system/
 ```
 
 ## Structure
