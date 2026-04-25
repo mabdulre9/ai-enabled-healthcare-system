@@ -39,7 +39,7 @@ A comprehensive, privacy-first healthcare management system featuring completely
 - **Context-Aware** - Uses complete patient data for insights
 - **Memory Management** - Unload models to free RAM
 - **Clinical Decision Support** - Differential diagnosis, drug interactions, treatment recommendations
-- **Zero Cost** - No API fees, no subscriptions
+- **Zero Cost** - Self hosted, no subscriptions
 
 ### Report Generator
 
