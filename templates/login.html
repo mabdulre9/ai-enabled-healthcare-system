@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Healthcare Management System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Healthcare Management System</h1>
+            <div class="subtitle">Electronic Medical Records (EMR) with AI Assistant</div>
+        </div>
+
+        <div class="form-section" style="max-width: 400px; margin: 40px auto;">
+            <h2>SYSTEM LOGIN</h2>
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/login">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>PASSWORD:</label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Enter system password"
+                           style="width: 100%; padding: 10px; font-size: 14px; margin-top: 4px;">
+                </div>
+
+                <div class="action-bar" style="justify-content: center;">
+                    <button type="submit" class="primary">LOGIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

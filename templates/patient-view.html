@@ -25,6 +25,7 @@
             <button onclick="downloadMedicalRecord()" class="success">📄 DOWNLOAD MEDICAL RECORD</button>
             <button onclick="editPatient()" class="warning">EDIT PATIENT</button>
             <button onclick="exportPatient()" class="primary">DOWNLOAD JSON</button>
+            <button onclick="exportFhir()" class="primary">DOWNLOAD FHIR</button>
             <button onclick="confirmDelete()" class="danger">DELETE PATIENT</button>
         </div>
 
@@ -438,6 +439,11 @@
             } catch (error) {
                 alert('ERROR DOWNLOADING PATIENT RECORD');
             }
+        }
+
+        function exportFhir() {
+            if (!currentPatient) return;
+            window.location.href = `/api/patients/${currentPatient.patientId}/fhir-export`;
         }
 
         async function confirmDelete() {

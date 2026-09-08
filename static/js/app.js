@@ -182,19 +182,9 @@ function newVisit(patientId) {
 // UTILITY FUNCTIONS
 // ============================================
 
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-}
-
 function getCurrentDate() {
     const date = new Date();
     return date.toISOString().split('T')[0];
-}
-
-function getCurrentDateTime() {
-    return new Date().toISOString();
 }
 
 // Allow Enter key to trigger search

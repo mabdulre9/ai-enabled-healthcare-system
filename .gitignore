@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+data/settings.json
+data/healthcare.db
+data/healthcare.db-wal
+data/healthcare.db-shm
+*.bak
+session-*.md
