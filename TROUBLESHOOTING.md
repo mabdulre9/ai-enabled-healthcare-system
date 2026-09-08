@@ -257,13 +257,15 @@ ls -la data/
 chmod -R 755 data/  # Linux/Mac
 ```
 
-**Check 3: JSON File**
+**Check 3: Database File**
 ```bash
-# Check if patients.json exists
-ls -la data/patients.json
+# Check if the SQLite database exists
+ls -la data/healthcare.db
 
-# If corrupted, delete and restart
-rm data/patients.json
+# If corrupted: restore from your backup copy of data/.
+# As a last resort, stop the app and delete healthcare.db -
+# WARNING: this loses ALL patients except the two sample records
+# that data/patients.json re-seeds on next start.
 ```
 
 ---
@@ -275,22 +277,15 @@ Ollama settings reset after restart
 
 **Solution:**
 
-**Check 1: Settings File**
-```bash
-ls -la data/settings.json
-```
+Settings are stored in the `settings` table of `data/healthcare.db` (not a JSON file anymore).
 
-**Check 2: Fix Manually**
-Create `data/settings.json`:
-```json
-{
-  "ollama_model": "qwen2.5:4b",
-  "ollama_host": "http://localhost:11434",
-  "temperature": 0.7,
-  "max_tokens": 2048,
-  "system_prompt": "You are a clinical AI assistant..."
-}
-```
+**Check 1: Save Flow**
+Use the **⚙️ SETTINGS** page → enter model → click **TEST MODEL** → then **SAVE SETTINGS**.
+The page must show a success alert; closing the tab before saving discards edits.
+
+**Check 2: App Writes to Disk**
+Confirm the app process can write to `data/` (see "Check 2: File Permissions" above).
+Defaults (`qwen2.5:4b`, localhost) are seeded automatically on first run if no settings row exists.
 
 ---
 
@@ -411,15 +406,20 @@ If you still see "GEMINI API":
 
 ### ❓ Is my patient data safe?
 
-**YES - 100% Local**
-- All data stored in `data/patients.json`
-- Never sent to cloud
-- No internet required (except Ollama download)
-- Ollama runs locally (no data sent out)
+**Private, but "safe" depends on your machine:**
+- All data is stored locally in a SQLite database: `data/healthcare.db`
+- Never sent to any cloud; the AI runs through local Ollama
+- ⚠ The database and downloaded reports are **unencrypted plain files** - anyone with access to the PC (or a stolen laptop) can read them
+
+**Protect it:**
+- Keep full-disk encryption ON (Windows BitLocker / macOS FileVault)
+- Lock your workstation when away
+- Change the default login password (`CLINIC_PASSWORD` env var)
+- Don't expose port 5000 beyond localhost (default is `127.0.0.1` - keep it that way)
 
 **Backup Your Data:**
 ```bash
-# Simple backup - copy data folder
+# Stop the app first, then copy the data folder (includes healthcare.db)
 cp -r data/ backup_$(date +%Y%m%d)/
 ```
 
@@ -499,7 +499,7 @@ The app works perfectly without AI!
 **Works offline!**
 - All patient data local
 - No internet needed (except initial Ollama download)
-- Perfect for secure environments
+- Suitable for air-gapped machines - but see "Is my patient data safe?" above re: encryption
 
 ---
 
@@ -513,7 +513,7 @@ The app works perfectly without AI!
 
 ---
 
-**Still having issues? Check the testing checklist (TESTING_CHECKLIST.md) to verify all features work!**
+**Still having issues? Check the guides in this repository first:**
 
 ---
 

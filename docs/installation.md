@@ -52,7 +52,8 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Access at `http://localhost:5000`
+Access `http://localhost:5000` and log in. Default password: `clinic123`
+(override with the `CLINIC_PASSWORD` environment variable).
 
 ## Ollama Installation
 

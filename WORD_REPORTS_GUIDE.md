@@ -211,7 +211,7 @@ This document contains protected health information
 - ✅ **Bullet Lists** - Easy-to-scan information
 - ✅ **Bold Labels** - Clear section headers
 - ✅ **Page Numbers** - Multi-page reports
-- ✅ **Confidentiality Footer** - HIPAA compliance note
+- ✅ **Confidentiality Footer** - "CONFIDENTIAL MEDICAL RECORD" notice
 
 ### **Typography:**
 - Professional fonts (Calibri/Arial)
@@ -393,17 +393,17 @@ Located in `generate_visit_report_docx()` and `generate_patient_report_docx()` f
 
 ## 🔒 Privacy & Compliance
 
-### **Built-in Safeguards:**
+### **Built-in Safeguards (provided by the software):**
 - ✅ "CONFIDENTIAL MEDICAL RECORD" footer
 - ✅ "For authorized use only" disclaimer
 - ✅ Protected health information notice
 - ✅ Generation timestamp
 
-### **Best Practices:**
-- ✅ Secure file storage
-- ✅ Encrypted email transmission
-- ✅ Patient consent before sharing
-- ✅ HIPAA-compliant handling
+### **Your Responsibilities (NOT enforced by the software):**
+- ⚠ Store downloaded reports in secured, access-controlled locations
+- ⚠ Email, if used, is manual and unencrypted unless your mail provider encrypts it in transit
+- ⚠ Obtain patient consent before sharing reports outside the clinic
+- ⚠ A .docx is a plain, unprotected file - HIPAA handling obligations transfer to you the moment you download it
 
 ---
 
@@ -506,7 +506,8 @@ A: Yes! Print-ready formatting included
 A: Manual email now, automated email coming in v2.4
 
 **Q: Are reports HIPAA compliant?**
-A: Yes, with proper handling and transmission
+A: No file is "HIPAA compliant." Reports contain PHI as plain, unencrypted Word documents;
+compliance depends entirely on how your clinic stores, transmits, and disposes of them.
 
 ---
 

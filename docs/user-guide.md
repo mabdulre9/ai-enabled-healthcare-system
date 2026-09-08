@@ -96,7 +96,7 @@ Click any patient on dashboard to view:
 
 ### Customizing Reports
 
-Edit clinic information in `app.py`:
+Edit clinic information in `app/config.py`:
 
 ```python
 CLINIC_NAME = 'Your Clinic Name'
@@ -117,8 +117,15 @@ CLINIC_EMAIL = 'contact@clinic.com'
 Supports:
 - Single Patient resources
 - Bundle collections
-- Observations, Conditions, Medications
-- AllergyIntolerance, Immunizations
+- Conditions, MedicationRequest/MedicationStatement, AllergyIntolerance
+
+*Not yet converted: Observations (labs), Immunizations, Encounters, Procedures.*
+
+### Exporting FHIR Data
+
+Open a patient record and click **DOWNLOAD FHIR** to get a FHIR R4 collection
+Bundle (Patient, Condition, MedicationRequest, AllergyIntolerance resources).
+Coded values (SNOMED/LOINC) are exported as display text only.
 
 ## Best Practices
 

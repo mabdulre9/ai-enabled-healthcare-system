@@ -24,7 +24,7 @@ Healthcare Management System is a professional Electronic Medical Records (EMR) 
 **Offline AI Clinical Assistant**
 - 100% private - all data remains on your local system
 - Completely offline - no internet connection required
-- Real-time streaming responses
+- Word-by-word (typewriter) response display
 - Context-aware clinical decision support
 - Drug interaction checking
 - Zero cost - no API fees or subscriptions
@@ -35,9 +35,9 @@ Healthcare Management System is a professional Electronic Medical Records (EMR) 
 - One-click document generation
 
 **FHIR Integration**
-- Import FHIR R4 compliant patient data
-- Batch patient processing
-- Automatic data validation
+- Import FHIR R4 Bundle or Patient resources (e.g., Synthea exports)
+- Export any patient as a FHIR collection Bundle
+- Data validation on import (simplified field mapping, not a FHIR-conformant server)
 
 ---
 
@@ -86,10 +86,13 @@ For detailed installation instructions, see [Getting Started](getting-started.ht
 
 ### Privacy & Security
 
-- **Local-First Architecture** - All patient data stored locally
+- **Local-First Architecture** - All patient data stored locally (SQLite)
 - **Offline AI Processing** - No cloud API calls
-- **HIPAA-Ready** - Deploy on compliant infrastructure
+- **Login Protected** - Shared password gate on all pages and APIs
 - **No Third-Party Dependencies** - Complete data control
+
+*Note: local-only storage reduces exposure but is not "HIPAA compliance." See the
+repository README's Security & Compliance Notes for implemented vs. missing safeguards.*
 
 ### Cost Effectiveness
 
@@ -100,7 +103,7 @@ For detailed installation instructions, see [Getting Started](getting-started.ht
 
 ### Technical Excellence
 
-- **FHIR R4 Compliant** - Healthcare interoperability standards
+- **FHIR R4 Import/Export** - Exchange patient data as FHIR Bundles (simplified mapping)
 - **RESTful API** - Clean, documented endpoints
 - **Professional UI** - Hospital-grade interface design
 - **Extensive Documentation** - Comprehensive guides and references
@@ -138,7 +141,7 @@ Reliable operation in areas with limited internet connectivity. Complete EMR fun
 - **AI Engine:** Ollama (local LLM inference)
 - **Document Generation:** python-docx
 - **Data Format:** JSON with FHIR R4 support
-- **Standards:** FHIR R4, WCAG AAA, RESTful API
+- **Standards:** FHIR R4 import/export (simplified mapping), WCAG AAA
 
 ---
 

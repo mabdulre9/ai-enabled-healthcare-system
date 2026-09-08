@@ -35,7 +35,7 @@ A comprehensive, privacy-first healthcare management system featuring completely
 
 - **100% Private** - All data stays on your computer
 - **Completely Offline** - No internet required for AI
-- **Real-time Streaming** - Word-by-word response generation
+- **Typewriter Display** - Responses revealed word-by-word (computed locally in one pass by Ollama)
 - **Context-Aware** - Uses complete patient data for insights
 - **Memory Management** - Unload models to free RAM
 - **Clinical Decision Support** - Differential diagnosis, drug interactions, treatment recommendations
@@ -50,9 +50,14 @@ A comprehensive, privacy-first healthcare management system featuring completely
 
 ### FHIR Integration
 
-- **Import FHIR R4** - Standard-compliant patient data
-- **Batch Processing** - Import multiple patients
-- **Data Validation** - Automatic format checking
+- **Import FHIR R4** - Ingest FHIR Bundle or Patient resources (e.g., Synthea exports)
+- **Export FHIR R4** - Download any patient record as a FHIR collection Bundle
+- **Data Validation** - Required fields and value checks on import
+
+*Scope note: import/export use a simplified field mapping (Patient, Condition,
+MedicationRequest/MedicationStatement, AllergyIntolerance; coded values are stored as
+display text, Observations not yet converted). This is a FHIR data-exchange feature,
+not a FHIR-conformant server: there is no RESTful FHIR API or CapabilityStatement.*
 
 ---
 
@@ -67,8 +72,8 @@ The system follows a modern layered architecture for scalability, maintainabilit
 - **Presentation Layer**: HTML5, CSS3, and vanilla JavaScript for responsive UI
 - **Application Layer**: Flask 3.0.0 backend handling business logic and routing
 - **AI Layer**: Ollama integration for completely offline AI assistance
-- **Data Layer**: Secure local data persistence with privacy-first design
-- **Integration Layer**: FHIR R4 compliant import/export capabilities
+- **Data Layer**: SQLite local database with privacy-first design
+- **Integration Layer**: FHIR R4 data exchange (simplified Bundle import/export)
 
 ---
 
@@ -99,6 +104,10 @@ pip install -r requirements.txt
 
 # 5. Run the application
 python app.py
+
+# 6. Open http://localhost:5000 in your browser and log in.
+#    Default password: clinic123  (CHANGE IT before real use)
+#    Set your own:    CLINIC_PASSWORD=your-secret python app.py
 ```
 
 
@@ -146,9 +155,8 @@ ollama list
 
 ### Complete Privacy
 
-- **No Cloud APIs** - AI runs locally on your computer
-- **No Data Sharing** - Patient data never leaves your system
-- **HIPAA-Ready** - Deploy on compliant infrastructure
+- **Local-Only Storage** - No cloud APIs; data is written only to your machine
+- **Access Gate** - All pages and APIs require the shared login (see Security Notes)
 - **Offline Capable** - Works without internet
 
 ### Zero Cost
@@ -163,7 +171,32 @@ ollama list
 - **Self-Hosted** - Run on your own hardware
 - **Customizable** - Modify to your needs
 - **No Vendor Lock-in** - Your data, your control
-- **Open Standards** - FHIR R4 compliant
+- **Open Standards** - FHIR R4 data import/export
+
+---
+
+## Security & Compliance Notes
+
+**This software is not "HIPAA-compliant" and no product can be.** Under the HIPAA Security
+Rule, compliance is the responsibility of the covered entity (your clinic), achieved through
+policies and safeguards. Being local-only reduces risk but does not satisfy the rule. Be
+aware of what this app does and does not provide:
+
+**Implemented:**
+- All pages and API endpoints require authentication (session cookie)
+- Server binds to `127.0.0.1` by default; debug mode off unless `FLASK_DEBUG=1`
+- Input validation and HTML stripping on patient data (XSS mitigation)
+- SQLite with transactions (protection against file corruption)
+
+**Not implemented (you must compensate):**
+- **Unique user accounts** - one shared password; the Security Rule requires per-user identification
+- **Audit log** - no record of who viewed, changed, or deleted what
+- **Encryption at rest** - the database and downloaded reports (Word/JSON/FHIR) are plain files; encrypt the disk (e.g., BitLocker/FileVault) and control PC access
+- **Automatic logoff** - the session stays valid until the browser closes
+- **Backup / recovery procedures** - copy `data/` regularly; patient deletion is permanent
+
+For real clinical use you also need: locked workstations, trained staff, consent handling,
+and a breach response plan. Do not use the default password.
 
 ---
 
@@ -184,7 +217,7 @@ ollama list
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **AI:** Ollama (100% offline)
 - **Documents:** python-docx
-- **Standards:** FHIR R4, WCAG AAA
+- **Standards:** FHIR R4 import/export (simplified mapping), WCAG AAA
 
 ---
 

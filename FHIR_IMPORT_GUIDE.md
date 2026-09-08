@@ -1,4 +1,4 @@
-# FHIR R4 IMPORT GUIDE
+# FHIR R4 IMPORT & EXPORT GUIDE
 
 ## Now Supporting Real FHIR R4 Data!
 
@@ -255,6 +255,47 @@ Simplified:
 
 ---
 
+## Exporting FHIR R4 Data
+
+Every patient record can be exported as a **FHIR R4 collection Bundle**:
+
+- **UI:** Patient Record → `DOWNLOAD FHIR` button
+- **API:** `GET /api/patients/<patientId>/fhir-export` (returns `application/fhir+json`, downloads as `<patientId>_fhir.json`)
+
+### What the Bundle Contains
+
+| Simplified Field | FHIR Resource |
+|---|---|
+| Demographics, contact, emergency contact | `Patient` |
+| activeConditions | `Condition` (clinicalStatus: active) |
+| pastConditions | `Condition` (clinicalStatus: resolved) |
+| activeMedications | `MedicationRequest` (status: active) |
+| pastMedications | `MedicationRequest` (status: stopped) |
+| allergies | `AllergyIntolerance` |
+
+### Example Export (truncated)
+
+```json
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "timestamp": "2026-09-09T12:00:00Z",
+  "entry": [
+    { "resource": { "resourceType": "Patient", "id": "PATIENT-001", "gender": "female", "birthDate": "1990-08-22" } },
+    { "resource": { "resourceType": "Condition", "clinicalStatus": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/condition-clinical", "code": "active" }] }, "code": { "text": "Type 2 Diabetes Mellitus" }, "subject": { "reference": "Patient/PATIENT-001" } } }
+  ]
+}
+```
+
+### Export Limitations (be honest with receiving systems)
+
+- Coded values (SNOMED CT / LOINC / RxNorm) are **not** preserved from import — resources carry free-text `code.text` only
+- Visits, vitals, and lab results are not exported (no Observation/Encounter resources)
+- Gender, dates, and severity values are mapped to FHIR code sets where possible
+- This makes the system suitable for **data handoff demos and backups**, not certified interoperability
+
+---
+
 ## Limitations & Notes
 
 ### Current Limitations
@@ -265,13 +306,19 @@ Simplified:
 
 ### What's Preserved
 - Original FHIR ID saved in notes
-- All converted data is FHIR-compatible when re-exported
-- Can round-trip: FHIR → Simplified → FHIR
+- Patient can be re-exported as a FHIR R4 collection Bundle (`DOWNLOAD FHIR` on the patient record, or `GET /api/patients/<id>/fhir-export`)
+- Round-trip works for core fields: FHIR → simplified → FHIR (lossy: coded values like SNOMED/LOINC are stored as display text only)
 
 ### ID Generation
-- System generates new patient IDs: `PATIENT-{first-8-chars-of-fhir-id}`
+- External FHIR IDs become `PATIENT-{first-8-chars-of-fhir-id}`
 - Original FHIR ID saved in `generalNotes`
 - Example: FHIR ID `6ea8365d-e53f-2d4b-23b4-8eb3d83bd2cb` → `PATIENT-6ea8365d`
+- IDs already in this system's format (`PATIENT-001`) are preserved on import, so exported Bundles re-import to the same record
+
+### ⚠ Round-Trip Warning
+Re-importing an exported Bundle **replaces** the patient record. Since visits, vitals,
+and lab results are not part of the Bundle, they are **lost** on re-import.
+Do not use FHIR re-import to "update" a record that has visit history.
 
 ---
 
@@ -356,16 +403,19 @@ Simplified:
 }
 ```
 
-**Re-exported (DOWNLOAD JSON):**
+**Re-exported as FHIR (DOWNLOAD FHIR):**
 ```json
 {
-  "patientId": "PATIENT-abc123",
-  "name": "John Doe",
-  ...
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    { "resource": { "resourceType": "Patient", "id": "PATIENT-abc123", ... } },
+    { "resource": { "resourceType": "Condition", ... } }
+  ]
 }
 ```
 
-Can be re-imported or used in other systems!
+The JSON export can be re-imported into this system; the FHIR Bundle can be consumed by FHIR-aware tools (with the coding limitations above).
 
 ---
 

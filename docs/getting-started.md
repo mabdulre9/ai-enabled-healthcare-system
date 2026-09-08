@@ -87,7 +87,14 @@ Open your web browser and navigate to:
 http://localhost:5000
 ```
 
-You should see the dashboard with two sample patients pre-loaded.
+A login page appears. The default password is `clinic123` - change it before real use by
+setting the `CLINIC_PASSWORD` environment variable when starting the app:
+
+```bash
+CLINIC_PASSWORD=your-secret python app.py
+```
+
+After logging in you should see the dashboard with two sample patients pre-loaded.
 
 ## Ollama AI Setup
 
@@ -198,13 +205,13 @@ Click on either patient to explore:
 2. Wait for patient context to load
 3. Enter a clinical question
 4. Click **ASK AI ASSISTANT** or press Enter
-5. View the streaming response
+5. View the response (displayed word-by-word)
 
 ## Configuration
 
 ### Clinic Information
 
-Edit clinic details in `app.py` (lines 18-22):
+Edit clinic details in `app/config.py`:
 
 ```python
 CLINIC_NAME = 'Your Clinic Name'
@@ -217,12 +224,14 @@ These details appear on generated medical reports.
 
 ### Change Application Port
 
-If port 5000 is in use, modify `app.py` (last line):
+If port 5000 is in use, start the app with the `FLASK_PORT` environment variable:
 
-```python
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)  # Change port
+```bash
+FLASK_PORT=5001 python app.py
 ```
+
+(Other options: `FLASK_HOST` to change the bind address - keep `127.0.0.1` unless you
+know why you need otherwise - and `FLASK_DEBUG=1` to enable debug mode for development only.)
 
 ## Troubleshooting
 
@@ -230,7 +239,7 @@ if __name__ == '__main__':
 
 **Error:** "Address already in use"
 
-**Solution:** Change the port in `app.py` as described above.
+**Solution:** Set `FLASK_PORT` as described above.
 
 ### Module Not Found
 

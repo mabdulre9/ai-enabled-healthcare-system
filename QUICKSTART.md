@@ -21,8 +21,11 @@ ollama pull qwen2.5:4b
 python app.py
 ```
 
-### Step 4: Open in Browser
+### Step 4: Open in Browser & Login
 Navigate to: http://localhost:5000
+
+A login page appears. Default password: `clinic123`
+Set your own before real use: `CLINIC_PASSWORD=your-secret python app.py`
 
 ### Step 5: Configure Ollama (if using AI)
 1. Click **⚙️ SETTINGS**
@@ -56,7 +59,7 @@ Navigate to: http://localhost:5000
 ## Common Issues
 
 **Problem**: "Port already in use"
-**Solution**: Change port in app.py (last line): `port=5001`
+**Solution**: Set the port via environment variable: `FLASK_PORT=5001 python app.py`
 
 **Problem**: "AI not working - Cannot connect to Ollama"
 **Solution**: 
@@ -83,8 +86,8 @@ Navigate to: http://localhost:5000
 - Patient IDs are auto-generated (PATIENT-001, PATIENT-002, etc.)
 - All forms can be saved with incomplete data (only starred fields required)
 - Visit history shows newest first
-- AI conversation history is kept during session
-- All patient data is stored locally in the `data/` folder
-- **Privacy**: No cloud APIs - everything runs on your computer
+- AI chat stays on screen until you navigate away or click CLEAR CONVERSATION
+- All patient data is stored locally in a SQLite database at `data/healthcare.db`
+- **Privacy**: No cloud APIs - everything runs on your computer (see Security Notes in README for limits)
 
 Enjoy using the Healthcare Management System!
