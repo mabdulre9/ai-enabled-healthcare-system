@@ -265,15 +265,20 @@ This document contains protected health information
 - Lab results via email
 - Prescription refill notifications
 
-**Configuration Required:**
+**Not implemented yet.** The app currently sends no email and has no SMTP code. If email
+delivery is built later, configuration would look something like this (location is
+indicative only - clinic settings now live in `app/config.py`, not `app.py`):
+
 ```python
-# In app.py
+# Not in the codebase today - illustrative only
 EMAIL_ENABLED = True
 SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
 EMAIL_ADDRESS = 'your-clinic-email@gmail.com'
 EMAIL_PASSWORD = 'your-app-password'
 ```
+
+Reports must be emailed manually for now.
 
 ---
 
@@ -323,7 +328,7 @@ Complete_Medical_Record_PATIENT-001_Jane_Doe_20240208.docx
 
 ### **Clinic Information:**
 
-Edit in `app.py`:
+Edit in `app/config.py`:
 ```python
 CLINIC_NAME = 'Your Clinic Name'
 CLINIC_ADDRESS = 'Your Address'

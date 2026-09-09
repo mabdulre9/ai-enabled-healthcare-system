@@ -6,12 +6,13 @@
 [![Ollama](https://img.shields.io/badge/AI-Ollama%20(Offline)-purple)](https://ollama.com) 
 [![Documentation](https://img.shields.io/badge/Docs-available-blue)](https://mabdulre9.github.io/ai-enabled-healthcare-system/)
 
-> **100% Private Electronic Medical Records (EMR) with Offline AI Assistant**  
+> **Local-First Electronic Medical Records (EMR) with an Offline AI Assistant**  
 > 📖 **Documentation:** https://mabdulre9.github.io/ai-enabled-healthcare-system/
 
-A comprehensive, privacy-first healthcare management system featuring completely offline AI powered by Ollama. No cloud APIs, no data sharing, 100% local and private.
+A privacy-first healthcare management system featuring offline AI powered by Ollama.
+No cloud APIs and no data processors are used at runtime — all patient data stays on the machine running the app. For the at-rest caveats that come with local storage, see [Security & Compliance Notes](#security--compliance-notes).
 
-![Privacy First](https://img.shields.io/badge/privacy-100%25%20offline-brightgreen) 
+![Runs Offline](https://img.shields.io/badge/ai-local%20only-brightgreen) 
 
 ---
 ## Key Features
@@ -26,19 +27,19 @@ A comprehensive, privacy-first healthcare management system featuring completely
   - Active conditions, medications, allergies, family history
 - **Vital Signs**
   - Blood pressure, heart rate, temperature, BMI tracking
-- **Lab Results**
-  - Laboratory test results and trending
+- **Lab Orders**
+  - Tests-ordered text captured per visit and shown on reports (no structured lab-results entry or trending UI)
 - **Immunizations**
   - Vaccination records management
 
 ### Offline AI Clinical Assistant
 
-- **100% Private** - All data stays on your computer
-- **Completely Offline** - No internet required for AI
+- **Local-First** - No runtime network calls; all data stays on your computer (stored unencrypted - see Security Notes)
+- **Completely Offline** - No internet required for AI after the model download
 - **Typewriter Display** - Responses revealed word-by-word (computed locally in one pass by Ollama)
-- **Context-Aware** - Uses complete patient data for insights
-- **Memory Management** - Unload models to free RAM
-- **Clinical Decision Support** - Differential diagnosis, drug interactions, treatment recommendations
+- **Context-Aware** - Sends a structured summary of the record (most recent visits and labs included, not the full history) as the LLM prompt
+- **Memory Management** - Frees RAM by restarting the Ollama server (force-stops the process; all models unload)
+- **Clinical Q&A on Patient Context** - Free-text LLM chat over the record; the model may suggest differential diagnoses, flag interactions, or recommend treatments in prose, but there is no validated drug-interaction database or rules engine behind it and output can be wrong
 - **Zero Cost** - Self hosted, no subscriptions
 
 ### Report Generator
@@ -157,7 +158,7 @@ ollama list
 
 - **Local-Only Storage** - No cloud APIs; data is written only to your machine
 - **Access Gate** - All pages and APIs require the shared login (see Security Notes)
-- **Offline Capable** - Works without internet
+- **Offline Capable** - Works without internet (after the one-time model download)
 
 ### Zero Cost
 
@@ -217,7 +218,8 @@ and a breach response plan. Do not use the default password.
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **AI:** Ollama (100% offline)
 - **Documents:** python-docx
-- **Standards:** FHIR R4 import/export (simplified mapping), WCAG AAA
+- **Standards:** FHIR R4 import/export (simplified mapping)
+- **Accessibility:** Semantic HTML with `lang` set; form labels are not yet programmatically associated with inputs and ARIA attributes are absent, so the UI is **not** WCAG-conformant at any level
 
 ---
 
@@ -233,7 +235,7 @@ and a breach response plan. Do not use the default password.
 
 ## Configuration
 
-Edit clinic information in `app.py` (lines 18-22):
+Edit clinic information in `app/config.py` (lines 7-10):
 
 ```python
 CLINIC_NAME = 'Your Clinic Name'
@@ -281,7 +283,7 @@ For issues or questions:
 
 **Built with ❤️ for healthcare professionals**
 
-**100% Private • 100% Free • 100% Offline**
+**Local-first • Free & open source • Runs offline**
 
 [⭐ Star this repo](https://github.com/mabdulre9/healthcare-system) if you find it useful!
 

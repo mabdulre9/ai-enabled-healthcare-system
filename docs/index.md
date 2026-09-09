@@ -9,24 +9,27 @@ A comprehensive, privacy-first healthcare management system featuring completely
 
 ## Introduction
 
-Healthcare Management System is a professional Electronic Medical Records (EMR) platform with integrated AI capabilities. It provides healthcare professionals with a complete solution for patient management, clinical documentation, and AI-assisted decision support.
+Healthcare Management System is an Electronic Medical Records (EMR) application with an
+integrated local AI assistant. It covers patient management, clinical documentation, and
+AI-assisted Q&A over a patient's record. It is **not** a certified/validated clinical
+decision-support system: AI output is free-text model generation and must be reviewed by a clinician.
 
 ### Key Capabilities
 
-**Complete EMR System**
+**Core EMR System**
 - Patient registration and demographics management
-- Visit tracking and comprehensive consultations
+- Visit tracking (chief complaint, exam, assessment, plan, prescriptions, follow-up)
 - Medical history with conditions, medications, and allergies
-- Vital signs monitoring and trending
-- Laboratory results tracking
+- Vital signs captured per visit (BMI auto-calculated from weight/height)
+- Lab tests-ordered text on visits (no structured lab-results entry or trending view yet)
 - Immunization records management
 
 **Offline AI Clinical Assistant**
-- 100% private - all data remains on your local system
-- Completely offline - no internet connection required
-- Word-by-word (typewriter) response display
-- Context-aware clinical decision support
-- Drug interaction checking
+- Local-first - no runtime network calls; all data stays on your machine (unencrypted at rest - see Security note below)
+- Completely offline after the one-time model download
+- Word-by-word (typewriter) response display (client-side reveal of the full Ollama reply)
+- Context-aware clinical Q&A: the LLM sees the patient record; any differential diagnosis or
+  interaction check it produces is free text from the model, not a validated rules engine
 - Zero cost - no API fees or subscriptions
 
 **Professional Documentation**
@@ -86,10 +89,10 @@ For detailed installation instructions, see [Getting Started](getting-started.ht
 
 ### Privacy & Security
 
-- **Local-First Architecture** - All patient data stored locally (SQLite)
+- **Local-First Architecture** - All patient data stored locally (SQLite, unencrypted at rest)
 - **Offline AI Processing** - No cloud API calls
 - **Login Protected** - Shared password gate on all pages and APIs
-- **No Third-Party Dependencies** - Complete data control
+- **No Third-Party Services** - Your data is not sent to external processors at runtime (the app itself uses open-source libraries: Flask, Werkzeug, python-docx, Pydantic, the ollama client)
 
 *Note: local-only storage reduces exposure but is not "HIPAA compliance." See the
 repository README's Security & Compliance Notes for implemented vs. missing safeguards.*
@@ -104,9 +107,9 @@ repository README's Security & Compliance Notes for implemented vs. missing safe
 ### Technical Excellence
 
 - **FHIR R4 Import/Export** - Exchange patient data as FHIR Bundles (simplified mapping)
-- **RESTful API** - Clean, documented endpoints
-- **Professional UI** - Hospital-grade interface design
-- **Extensive Documentation** - Comprehensive guides and references
+- **JSON HTTP API** - REST-style endpoints under `/api/` (no OpenAPI spec / generated reference yet)
+- **Clinic-oriented UI** - Simple, functional single-page app (no component framework)
+- **Guides** - Getting-started, user-guide, and topic docs below (no full API reference yet)
 
 ---
 
@@ -140,8 +143,9 @@ Reliable operation in areas with limited internet connectivity. Complete EMR fun
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **AI Engine:** Ollama (local LLM inference)
 - **Document Generation:** python-docx
-- **Data Format:** JSON with FHIR R4 support
-- **Standards:** FHIR R4 import/export (simplified mapping), WCAG AAA
+- **Storage:** SQLite (`data/healthcare.db`); each patient/settings record is stored as a JSON blob
+- **Standards:** FHIR R4 import/export (simplified mapping)
+- **Accessibility:** Semantic HTML with `lang` set; labels are not yet associated with inputs and ARIA attributes are absent, so the UI is **not** WCAG-conformant at any level
 
 ---
 
@@ -149,7 +153,6 @@ Reliable operation in areas with limited internet connectivity. Complete EMR fun
 
 - **Installation Guide:** [Getting Started](getting-started.html)
 - **User Documentation:** [User Guide](user-guide.html)
-- **API Documentation:** [API Reference](api-reference.html)
 - **Common Issues:** [Troubleshooting](troubleshooting.html)
 - **GitHub Issues:** [Report a bug](https://github.com/mabdulre9/ai-enabled-healthcare-system/issues)
 

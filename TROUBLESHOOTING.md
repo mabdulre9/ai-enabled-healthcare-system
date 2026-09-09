@@ -183,11 +183,24 @@ OSError: [Errno 98] Address already in use
 
 **Solution:**
 
-**Option 1: Use Different Port**
-1. Open `app.py`
-2. Find last line: `app.run(debug=True, host='0.0.0.0', port=5000)`
-3. Change to: `app.run(debug=True, host='0.0.0.0', port=5001)`
-4. Access at: http://localhost:5001
+**Option 1: Use a Different Port**
+Set the `FLASK_PORT` environment variable before running (no code edit needed):
+
+```bash
+# Windows (cmd)
+set FLASK_PORT=5001 && python app.py
+
+# Windows (PowerShell)
+$env:FLASK_PORT=5001; python app.py
+
+# Linux/Mac
+FLASK_PORT=5001 python app.py
+```
+
+Then access at: http://localhost:5001
+
+(The server binds to `127.0.0.1` by default. `FLASK_HOST` overrides the bind address -
+keep it localhost-only unless you know why you need otherwise.)
 
 **Option 2: Kill Process Using Port**
 ```bash
